@@ -1,5 +1,5 @@
 'use strict';
-/* games.js: 15 educational game engines, runner, editor */
+/* games.js: 18 educational game engines, runner, editor */
 const GFIELDS={
  g_mcq:{l:'الأسئلة',cols:[{l:'السؤال'},{l:'صورة',w:'s',img:1},{l:'الإجابة الصحيحة'},{l:'خيار خاطئ'},{l:'خيار خاطئ'}]},
  g_mcq4:{l:'الأسئلة',cols:[{l:'السؤال'},{l:'صورة',w:'s',img:1},{l:'الإجابة الصحيحة'},{l:'خيار خاطئ'},{l:'خيار خاطئ'},{l:'خيار خاطئ'}]},
@@ -10,6 +10,8 @@ const GFIELDS={
  g_tf:{l:'العبارات',cols:[{l:'العبارة'},{l:'صورة',w:'s',img:1},{l:'الإجابة',w:'m',opt:['صح','خطأ']}]},
  g_seq:{l:'جولات الترتيب',cols:[{l:'المطلوب'},{l:'العناصر بالترتيب الصحيح، بينها -'}]},
  g_lvl:{l:'بنك الأسئلة',cols:[{l:'السؤال'},{l:'صورة',w:'s',img:1},{l:'الإجابة الصحيحة'},{l:'خيار خاطئ'},{l:'خيار خاطئ'},{l:'المستوى',w:'m',opt:['سهل','متوسط','صعب']}]},
+ g_match:{l:'أزواج المطابقة: بطاقة ونظيرتها',cols:[{l:'البطاقة الأولى (سؤال أو كلمة)'},{l:'صورة',w:'s',img:1},{l:'البطاقة المطابقة (الجواب)'}]},
+ pieces:{l:'عدد قطع الصورة',t:'sel',opt:[['4','٤ قطع · سهل'],['9','٩ قطع · متوسط'],['16','١٦ قطعة · صعب']]},
  count:{l:'عدد الأسئلة في الجولة',t:'num',min:1,max:30,def:8},time:{l:'الوقت لكل سؤال بالثواني',t:'num',min:5,max:120,def:20},
  level:{l:'مستوى الصعوبة',t:'sel',opt:[['all','كل المستويات'],['سهل','سهل'],['متوسط','متوسط'],['صعب','صعب']]},gtitle:{l:'اسم اللعبة',t:'text'}
 };
@@ -28,7 +30,10 @@ const GTYPES={
  tf:{name:'صح أم خطأ',icon:'circle-check-big',f:'g_tf',timed:1,desc:'تحديات سريعة بالوقت.'},
  order:{name:'الترتيب الصحيح',icon:'list-ordered',f:'g_seq',desc:'رتّبوا الأرقام أو الكلمات أو الأحداث.'},
  teams:{name:'تحدي المجموعات',icon:'swords',f:'g_mcq',timed:1,desc:'فريقان يتنافسان بشدّ الحبل.'},
- bank:{name:'بنك الأسئلة',icon:'landmark',f:'g_lvl',lvl:1,desc:'اختاروا المستوى واكسبوا النقاط.'}
+ bank:{name:'بنك الأسئلة',icon:'landmark',f:'g_lvl',lvl:1,desc:'اختاروا المستوى واكسبوا النقاط.'},
+ puzzle:{name:'تركيب القطع',icon:'puzzle',f:'g_pairs',ex:['pieces'],desc:'ركّبوا قطع الصورة واكتشفوا الكلمة.'},
+ hunt:{name:'البحث عن الكنز',icon:'shovel',f:'g_mcq',desc:'احفروا الجزيرة: كل إجابة صحيحة حفرة جديدة.'},
+ match:{name:'ذاكرة المطابقة',icon:'layers',f:'g_match',desc:'اقلبوا البطاقات وطابقوا السؤال بجوابه.'}
 };
 const GT_ORDER=Object.keys(GTYPES);
 const gameLocked=t=>GT_ORDER.indexOf(t)>=lim('games');
@@ -48,6 +53,10 @@ function gameArt(t){const s=b=>`<svg viewBox="0 0 100 100" class="gart" aria-hid
  order:s(`${[0,1,2].map(i=>`<rect x="${8+i*30}" y="${60-i*18}" width="26" height="${22+i*18}" rx="5" fill="${['#38bdf8','#a78bfa','#f472b6'][i]}"/><text x="${15+i*30}" y="${78-i*4}" font-size="18" font-weight="800" fill="#fff" font-family="sans-serif">${i+1}</text>`).join('')}`),
  teams:s(`<path d="M6 54 H94" stroke="#a16207" stroke-width="5"/><rect x="46" y="44" width="8" height="20" fill="#ef4444"/><circle cx="16" cy="40" r="9" fill="#38bdf8"/><circle cx="84" cy="40" r="9" fill="#f472b6"/><rect x="10" y="50" width="12" height="24" rx="5" fill="#38bdf8"/><rect x="78" y="50" width="12" height="24" rx="5" fill="#f472b6"/>`),
  bank:s(`<rect x="8" y="14" width="26" height="20" rx="4" fill="#bbf7d0"/><rect x="37" y="14" width="26" height="20" rx="4" fill="#fde68a"/><rect x="66" y="14" width="26" height="20" rx="4" fill="#fecaca"/>${[0,1,2].map(r=>[0,1,2].map(c=>`<rect x="${8+c*29}" y="${40+r*18}" width="26" height="14" rx="3" fill="${['#22c55e','#f59e0b','#ef4444'][c]}" opacity="${1-r*.2}"/>`).join('')).join('')}`)
+,
+ puzzle:s(`<path d="M10 10 H44 V22 Q52 16 52 26 Q52 36 44 30 V44 H10Z" fill="#f472b6"/><path d="M56 10 H90 V44 H76 Q82 52 72 52 Q62 52 68 44 H56Z" fill="#38bdf8"/><path d="M10 56 H24 Q18 48 28 48 Q38 48 32 56 H44 V90 H10Z" fill="#facc15"/><path d="M58 58 H92 V92 H58 V78 Q50 84 50 74 Q50 64 58 70Z" fill="#4ade80" transform="rotate(8 75 75)"/>`),
+ hunt:s(`<rect width="100" height="100" rx="14" fill="#7dd3fc"/><ellipse cx="50" cy="60" rx="44" ry="30" fill="#fde68a"/>${[0,1,2].map(r=>[0,1,2].map(c=>`<rect x="${22+c*20}" y="${42+r*13}" width="16" height="10" rx="3" fill="${r===1&&c===2?'#a16207':'#eab308'}" opacity=".9"/>`).join('')).join('')}<path d="M62 56 L70 64 M70 56 L62 64" stroke="#dc2626" stroke-width="3.5" stroke-linecap="round"/><path d="M14 30 L30 14" stroke="#78350f" stroke-width="5" stroke-linecap="round"/><path d="M26 10 L36 20 L30 26 L20 16Z" fill="#94a3b8"/>`),
+ match:s(`<rect x="6" y="18" width="40" height="56" rx="8" fill="#fff" stroke="#7c3aed" stroke-width="4"/><text x="14" y="54" font-size="20" font-weight="800" fill="#7c3aed" font-family="sans-serif">٢+٣</text><rect x="54" y="26" width="40" height="56" rx="8" fill="#fff" stroke="#16a34a" stroke-width="4"/><text x="66" y="64" font-size="26" font-weight="800" fill="#16a34a" font-family="sans-serif">٥</text><path d="M40 86 Q50 96 60 86" stroke="#facc15" stroke-width="5" fill="none" stroke-linecap="round"/>`)
 };return A[t]||A.wheel}
 function allGames(){return [...GAMES,...ME.custom.filter(c=>c.kind==='game').map(c=>({...c.cfg,id:c._id,custom:1})),...ME.games.map(g=>({...g,id:g._id,mine:1}))].filter(g=>GTYPES[g.type]&&!ME.hidden.includes(g.id))}
 const findGame=id=>id?allGames().find(g=>g.id===id)||GAMES.find(g=>g.id===id):null;
@@ -168,6 +177,42 @@ const ENG={
  bank(M,items,g,A){const lv=['سهل','متوسط','صعب'],pts={سهل:1,متوسط:2,صعب:3};const used=new Set();A.max(items.reduce((s,r)=>s+(pts[r[5]]||1),0));
   const board=()=>{M.innerHTML=`<div class="bank">${lv.map(L=>`<div class="bcol"><h3>${L} · ${ar(pts[L])} ${pts[L]>1?'نقاط':'نقطة'}</h3>${items.map((r,k)=>({r,k})).filter(x=>(x.r[5]||'سهل')===L).map(x=>`<button class="bq lv${pts[L]}" data-k="${x.k}" ${used.has(x.k)?'disabled':''}>${used.has(x.k)?ICO.ok:ar(pts[L])}</button>`).join('')}</div>`).join('')}</div><p class="hint">الدور: فريق «${esc((MOT.teams()[MOT.active]||{}).n||'')}»</p>`;
    M.onclick=e=>{const b=e.target.closest('.bq');if(!b||b.disabled)return;const k=+b.dataset.k,r=items[k];used.add(k);const q=qCard(r,3,{onRight:()=>{A.add(pts[r[5]]||1);MOT.awardTeam(MOT.active,pts[r[5]]||1,'بنك الأسئلة');setTimeout(back,900)},onWrong:bb=>{sfx('no');bb.classList.add('no');revealRight(M);setTimeout(back,1300)}});M.innerHTML=q.html;q.bind(M)}};
-  const back=()=>{MOT.active=(MOT.active+1)%MOT.teams().length;used.size>=items.length?A.end('انتهى بنك الأسئلة!'):board()};board()}
+  const back=()=>{MOT.active=(MOT.active+1)%MOT.teams().length;used.size>=items.length?A.end('انتهى بنك الأسئلة!'):board()};board()},
+ puzzle(M,items,g,A){const n=[4,9,16].includes(num(g.pieces))?num(g.pieces):9,k=Math.sqrt(n);let i=0;A.max(items.length);
+  const draw=()=>{const r=items[i],pic=picHTML(r[1]);let order=shuffle([...Array(n).keys()]),t=0;while(order.every((v,j)=>v===j)&&t++<10)order=shuffle(order);let placed=0,sel=null;
+   const piece=p=>{const x=p%k,y=Math.floor(p/k);return `<span class="pzc" style="--k:${k};--x:${x};--y:${y}"><span class="pzi">${pic}</span></span>`};
+   M.innerHTML=`<div class="pz"><div class="pzb" style="--k:${k}">${[...Array(n).keys()].map(p=>`<div class="pzs" data-p="${p}"><span class="pzg">${piece(p)}</span></div>`).join('')}</div><div class="pzside"><p class="hint">اسحبوا كل قطعة إلى مكانها، أو اضغطوا عليها ثم على مكانها · الصورة ${ar(i+1)} من ${ar(items.length)}</p><div class="pzt">${order.map(p=>`<button class="pzp" data-p="${p}" aria-label="قطعة">${piece(p)}</button>`).join('')}</div><button class="btn ter" data-peek>${ic('eye')}نظرة على الصورة</button></div></div>`;icons();
+   const put=(b,slot)=>{if(!slot||slot.classList.contains('ok'))return;if(slot.dataset.p===b.dataset.p){slot.classList.add('ok');b.remove();sfx('pop');placed++;if(placed===n){A.add(1);done()}}else A.wrong(b,'ليس هذا مكانها، جرّبوا مكانًا آخر')};
+   const done=()=>{const s=$('.pzside',M);s.innerHTML=`<div class="pzdone"><h3>${esc(r[0])}</h3><button class="spk" data-say="${esc(r[0])}" aria-label="استمعوا">${ICO_SPK}</button></div>${nextBtn(i<items.length-1?'الصورة التالية':'النتيجة')}`;icons();$('.pzb',M).classList.add('won');speak(r[0])};
+   M.onclick=e=>{const b=e.target.closest('button,.pzs');if(!b)return;if(b.dataset.say)return speak(b.dataset.say);if(b.hasAttribute('data-next')){i++;return i>=items.length?A.end('ركّبتم كل الصور!'):draw()}
+    if(b.hasAttribute('data-peek')){const bd=$('.pzb',M);bd.classList.add('peek');b.disabled=true;setTimeout(()=>{bd.classList.remove('peek');b.disabled=false},1800);return}
+    if(b.classList.contains('pzp')){if(M._dragged){M._dragged=0;return}sel=b;$$('.pzp',M).forEach(x=>x.classList.toggle('sel',x===b));sfx('tap');return}
+    if(b.classList.contains('pzs')&&sel){put(sel,b);sel=null;$$('.pzp',M).forEach(x=>x.classList.remove('sel'))}};
+   M.onpointerdown=e=>{const b=e.target.closest('.pzp');if(!b)return;const sx=e.clientX,sy=e.clientY;let gh=null;
+    const mv=ev=>{if(!gh&&Math.hypot(ev.clientX-sx,ev.clientY-sy)>8){gh=b.cloneNode(true);gh.classList.add('pzghost');gh.style.width=b.offsetWidth+'px';gh.style.height=b.offsetHeight+'px';document.body.appendChild(gh)}if(gh){gh.style.left=ev.clientX+'px';gh.style.top=ev.clientY+'px';$$('.pzs',M).forEach(x=>x.classList.remove('hov'));const t=document.elementFromPoint(ev.clientX,ev.clientY),sl=t&&t.closest('.pzs');if(sl)sl.classList.add('hov')}};
+    const up=ev=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up);if(gh){gh.remove();M._dragged=1;$$('.pzs',M).forEach(x=>x.classList.remove('hov'));const t=document.elementFromPoint(ev.clientX,ev.clientY);put(b,t&&t.closest('.pzs'))}};
+    addEventListener('pointermove',mv);addEventListener('pointerup',up)}};
+  draw()},
+ hunt(M,items,g,A){const C=5,R=4,N=C*R,chest=Math.floor(Math.random()*N);let qi=0,found=false,coins=0;const dug=new Set();
+  const coinSet=new Set(shuffle([...Array(N).keys()].filter(x=>x!==chest)).slice(0,6));A.max(items.length+3);
+  const dir=c=>{const cx=chest%C,cy=Math.floor(chest/C),x=c%C,y=Math.floor(c/C),dx=cx-x,dy=cy-y;const a=Math.atan2(dy,-dx)*180/Math.PI,d=Math.max(Math.abs(dx),Math.abs(dy));return{a,near:d<=1}};
+  const tile=c=>{if(!dug.has(c))return `<button class="htl" data-c="${c}" aria-label="مربع ${ar(c+1)}"><span>${ar(c+1)}</span></button>`;
+   if(c===chest)return `<div class="htl dug chest1">${gameArt('treasure')}</div>`;if(coinSet.has(c))return `<div class="htl dug"><span class="hcoin">${STK.star}</span></div>`;
+   const d=dir(c);return `<div class="htl dug"><span class="harr ${d.near?'near':''}" style="--a:${d.a}deg" title="${d.near?'الكنز قريب جدًا!':'الكنز في هذا الاتجاه'}">➜</span></div>`};
+  const board=(msg)=>{M.innerHTML=`<div class="hunt"><div class="hisl"><div class="hgrid" style="--c:${C}">${[...Array(N).keys()].map(tile).join('')}</div></div><div class="hside" id="hside"><p class="hint">${msg||'اختاروا مربعًا لتحفروا فيه. أجيبوا صحيحًا ليُحفر!'}</p><p class="gcnt">الأسئلة الباقية: ${ar(items.length-qi)} · النجوم: ${ar(coins)}</p><p class="hint">الأسهم تشير إلى اتجاه الكنز 🧭</p></div></div>`;
+   M.onclick=e=>{const b=e.target.closest('.htl');if(!b||!b.dataset.c||$('#hside .gq',M))return;$$('.htl',M).forEach(x=>x.classList.toggle('sel',x===b));sfx('tap');ask(+b.dataset.c)}};
+  const ask=c=>{const r=items[qi],q=qCard(r,3,{onRight:()=>{qi++;dig(c)},onWrong:b=>{sfx('no');b.classList.add('no');revealRight($('#hside',M));qi++;setTimeout(()=>qi>=items.length?over():board('إجابة غير صحيحة، لم نحفر هذه المرة. اختاروا مربعًا آخر'),1400)}});
+   $('#hside',M).innerHTML=`<p class="hint">مربع ${ar(c+1)}: أجيبوا لتحفروا</p>${q.html}`;q.bind($('#hside',M))};
+  const dig=c=>{dug.add(c);sfx('pop');
+   if(c===chest){found=true;A.add(3);board();$('#hside',M).innerHTML=`<div class="chest">${gameArt('treasure')}<h3>وجدتم الكنز!</h3></div>`;return setTimeout(()=>A.end('وجدتم الكنز المدفون!'),1700)}
+   if(coinSet.has(c)){coins++;A.add(1);setTimeout(()=>qi>=items.length?over():board('وجدتم نجمة! واصلوا البحث عن الكنز'),700);return}
+   const d=dir(c);setTimeout(()=>qi>=items.length?over():board(d.near?'الكنز قريب جدًا! احفروا بجانب هذا المربع':'لا كنز هنا، لكن السهم يدلّكم على الاتجاه'),700)};
+  const over=()=>{dug.add(chest);board('انتهت الأسئلة! هذا مكان الكنز');setTimeout(()=>A.end(found?'وجدتم الكنز!':'كان الكنز قريبًا! حاولوا مرة أخرى'),1800)};
+  board()},
+ match(M,items,g,A){const ps=items.slice(0,8);A.max(ps.length);const cards=shuffle(ps.flatMap((p,k)=>[{k,h:`<span class="mw">${p[1]?`<span class="mp sm">${picHTML(p[1])}</span>`:''}${esc(p[0])}</span>`},{k,h:`<span class="mw ma">${esc(p[2])}</span>`}]));let open=[],found=0,moves=0,lock=false,peek=1;
+  M.innerHTML=`<p class="hint">اقلبوا بطاقتين وطابقوا كل سؤال بجوابه · المحاولات: <b id="mvs">${ar(0)}</b></p><div class="mem" style="--n:${cards.length>12?6:4}">${cards.map((c,i)=>`<button class="mc" data-i="${i}" aria-label="بطاقة"><span class="mci"><span class="mcb">${STK.star}</span><span class="mcf">${c.h}</span></span></button>`).join('')}</div><button class="btn ter" data-peek>${ic('eye')}نظرة سريعة على البطاقات</button>`;icons();
+  M.onclick=e=>{const pk=e.target.closest('[data-peek]');if(pk){if(!peek||lock)return;peek=0;pk.disabled=true;lock=true;$$('.mc:not(.done)',M).forEach(x=>x.classList.add('on'));setTimeout(()=>{$$('.mc:not(.done)',M).forEach(x=>x.classList.remove('on'));lock=false;open=[]},2500);return}
+   const b=e.target.closest('.mc');if(!b||lock||b.classList.contains('on'))return;b.classList.add('on');sfx('flip');open.push(b);if(open.length<2)return;moves++;$('#mvs').textContent=ar(moves);
+   const[a,c]=open;if(cards[a.dataset.i].k===cards[c.dataset.i].k){a.classList.add('done');c.classList.add('done');open=[];found++;A.add(1);if(found===ps.length)setTimeout(()=>A.end(`طابقتم كل البطاقات في ${ar(moves)} محاولة`),700)}else{lock=true;setTimeout(()=>{a.classList.remove('on');c.classList.remove('on');open=[];lock=false},1000)}}}
 };
 function treasureMap(){return `<svg viewBox="0 0 200 140" class="tsvg" aria-hidden="true"><rect width="200" height="140" fill="#38bdf8"/><path d="M20 70 Q30 20 90 24 Q160 14 176 60 Q190 110 120 120 Q40 132 20 70Z" fill="#fde68a"/><path d="M40 74 Q50 44 90 46 Q140 40 150 70 Q156 98 110 104 Q60 108 40 74Z" fill="#86efac"/><path d="M50 90 Q80 60 110 80 T150 60" stroke="#92400e" stroke-width="2.4" stroke-dasharray="5 4" fill="none"/><path d="M144 52 L156 64 M156 52 L144 64" stroke="#dc2626" stroke-width="4" stroke-linecap="round"/><circle cx="70" cy="60" r="6" fill="#16a34a"/><circle cx="100" cy="96" r="5" fill="#16a34a"/></svg>`}

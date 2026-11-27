@@ -1,8 +1,8 @@
 'use strict';
 /* app.js: routing, header, boot */
 const ROUTES={home:[vHome,null,0],templates:[vTemplates,()=>tpPanel(),0],lessons:[vLessons,()=>lpPanel(),0],games:[vGames,()=>gpPanel(),0],studio:[vStudio,()=>{bindStudio();stRender()},0,'studio'],
- motivation:[vMotivation,()=>{bindMotivation();clsBar();motPanel()},1,'mot'],pricing:[vPricing,null,0],journey:[vJourney,()=>jMount(),0],dashboard:[vDashboard,()=>dbPanel(),1],admin:[vAdmin,()=>{bindAdmin();adPanel()},0,'admin']};
-const NAV=[['home','الرئيسية'],['templates','القوالب'],['lessons','الدروس الجاهزة'],['games','الألعاب'],['studio','الاستوديو'],['motivation','التحفيز'],['pricing','الباقات']];
+ class:[vClassroom,()=>{bindClassroom();crBar();crPanel()},1,'cr'],motivation:[vMotivation,()=>{bindMotivation();clsBar();motPanel()},1,'mot'],pricing:[vPricing,null,0],journey:[vJourney,()=>jMount(),0],dashboard:[vDashboard,()=>dbPanel(),1],admin:[vAdmin,()=>{bindAdmin();adPanel()},0,'admin']};
+const NAV=[['home','الرئيسية'],['templates','القوالب'],['lessons','الدروس الجاهزة'],['games','الألعاب'],['studio','الاستوديو'],['class','فصلي'],['motivation','التحفيز'],['pricing','الباقات']];
 function hdr(){$('#nav').innerHTML=NAV.map(([k,l])=>`<a href="#${k}">${l}</a>`).join('')+(S.admin?`<a href="#admin">الإدارة</a>`:'');
  $('#acct').innerHTML=ME.p?`<a class="btn sec acc" href="#dashboard">${ic('circle-user-round')}<span>${esc(ME.p.name)}</span><em class="bd y">${esc(curPlan().name)}</em></a>`:`<a class="btn pri" href="#dashboard">${ic('log-in')}<span>حسابي</span></a>`;
  const v=(location.hash||'#home').slice(1);$$('#nav a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+v));icons()}
