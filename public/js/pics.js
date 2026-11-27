@@ -13,7 +13,7 @@ const PICS=(()=>{const m={
  '🔑':'key','☂️':'umbrella','☂':'umbrella','🔒':'lock','🔔':'bell','🚲':'bicycle','🚗':'car','🖼️':'frame','🖼':'frame','🎯':'target',
  '🐪':'camel','🐫':'camel','🦆':'duck','🦁':'lion','🐱':'cat','🐄':'cow','🐔':'chicken','🐑':'sheep','🐎':'horse','🐘':'elephant',
  '🐟':'fish','🐦':'bird','🐥':'bird','🐢':'turtle','🐇':'rabbit','🦒':'giraffe','🐯':'tiger','🐻':'polar_bear','🐸':'frog','🐶':'dog',
- '🦋':'butterfly','🐛':'bitten_leaf','🐝':'beehive','🐳':'whale_tail','🐜':'anthill','✋':'hand','🖐️':'hand','🖐':'hand','🙌':'handprint','🤲':'heart_hands','🤝':'heart_hands','❤️':'heart','❤':'heart','🩵':'heart',
+ '🦋':'butterfly','🐛':'caterpillar','🐝':'bee','🐳':'whale_tail','🐜':'ant','✋':'hand','🖐️':'hand','🖐':'hand','🙌':'handprint','🤲':'heart_hands','🤝':'heart_hands','❤️':'heart','❤':'heart','🩵':'heart',
  '👁️':'glasses','👁':'glasses','👀':'glasses','👂':'headphones','👃':'smell_flower','👅':'lollipop','🧼':'soap','🪥':'toothbrush','🛁':'bathtub','🧴':'lotion','🚰':'drop',
  '🔺':'triangle','🟦':'square','🟨':'square','🟥':'square','🔴':'circle','🔵':'circle','🟡':'circle','🟢':'circle','🟠':'circle','⚪':'circle','🗑️':'recycle_bin','🗑':'recycle_bin','🚯':'recycle_bin',
  '🧥':'coat','🧣':'scarf','🧤':'gloves','👒':'sun_hat','🕶️':'sunglasses','🕶':'sunglasses','🏊':'beach',
