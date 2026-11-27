@@ -167,6 +167,7 @@ async function exportPptx(Ls){if(!lim('export'))return needPlan('تصدير Powe
      else if(e.kind==='cards')lines=(wd.items||[]).map(t=>(isSrc(t.pic)?'':t.pic+' ')+t.txt);else if(e.kind==='flip')lines=[`${wd.pic||''} ${wd.word||''}`,wd.info||''];
      else if(e.kind==='order')lines=['رتّبوا الحروف: '+(wd.mix||Array.from(String(wd.word||''))).join('  ')];else if(e.kind==='scale')lines=[...(wd.p?['بطاقة الخروج: '+wd.p,'']:[]),wd.q||'','😀  🙂  🤔'];
      else if(e.kind==='levels')lines=(wd.items||[]).map(t=>{const k=LVK(t.lv);return `${k?LVL[k].n+' ('+LVL[k].d+')':t.lv}: ${t.t}`});
+     else if(e.kind==='sort')lines=(wd.cats||[]).map((c,k)=>c+': '+(wd.items||[]).filter(x=>x.c===k).map(x=>x.t).join('، '));
      else if(e.kind==='compare')lines=(wd.items||[]).flatMap(r=>['✗ '+r[0],'✓ '+r[1],'']);
      else if(e.kind==='timer')lines=[`${wd.strategy||'نشاط تعاوني'} · ${ar(num(wd.min)||3)} دقائق`,...(wd.steps||[]).map((t,i)=>ar(i+1)+'. '+t)];
      else if(e.kind==='game'){const g=findGame(wd.ref);lines=['لعبة الدرس: '+(g?g.title:'')]}else if(e.kind==='podium')lines=['أحسنتم يا أبطال! 🏆'];

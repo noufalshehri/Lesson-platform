@@ -41,6 +41,7 @@ function widget(e,d,ctx){const w=e.data||{},done=!!(ctx.done&&ctx.done.has(e.id)
   case 'tasks':return `<ul class="wg gl tk">${(w.items||[]).map(t=>`<li><button class="gchk" aria-label="أنجزت المهمة">${ICO.ok}</button><span>${esc(t)}</span></li>`).join('')}</ul>`;
   case 'steps':return `<ol class="wg stp">${(w.items||[]).map((t,i)=>`<li><b>${ar(i+1)}</b><span>${esc(t)}</span></li>`).join('')}</ol>`;
   case 'cards':return `<div class="wg exg">${(w.items||[]).map(t=>`<div class="exc"><div class="exp">${picHTML(t.pic)}</div><span>${esc(t.txt)}</span></div>`).join('')}</div>`;
+  case 'sort':{const cats=w.cats||[],its=(w.items||[]);return `<div class="wg sortw" data-n="${its.length}"><div class="sbins">${cats.map((c,k)=>`<div class="sbin sb${k}" data-bin="${k}" role="button" tabindex="0" aria-label="ضعوا هنا: ${esc(c)}"><b>${esc(c)}</b><div class="sbz"></div></div>`).join('')}</div><div class="stray">${its.map((x,k)=>`<button class="sitem" data-sc="${x.c}" data-k="${k}">${x.pic?`<span class="sp">${picHTML(x.pic)}</span>`:''}<span>${esc(x.t)}</span></button>`).join('')}</div></div>`}
   case 'levels':return `<div class="wg lvw">${(w.items||[]).map(t=>{const k=LVK(t.lv);return `<div class="lvc lv-${k}"><div class="lvh"><span class="lvi">${STK[LVL[k].s]}</span><b>${esc(LVL[k].n)}</b><small>${esc(LVL[k].d)}</small></div><p>${esc(t.t)}</p></div>`}).join('')}</div>`;
   case 'compare':return `<div class="wg cmpw"><div class="cmph"><span class="cx">${ICO.no} خطأ شائع</span><span class="cv">${ICO.ok} الصواب</span></div>${(w.items||[]).map(r=>`<div class="cmpr"><p class="cx">${esc(r[0])}</p><p class="cv">${esc(r[1])}</p></div>`).join('')}</div>`;
   case 'timer':{const sec=Math.max(30,Math.min(1200,(num(w.min)||3)*60));return `<div class="wg tmw"><div class="tml"><span class="kick">استراتيجية</span><h3 class="kq">${esc(w.strategy||'نشاط تعاوني')}</h3><ol class="stp">${(w.steps||[]).map((t,i)=>`<li><b>${ar(i+1)}</b><span>${esc(t)}</span></li>`).join('')}</ol></div><div class="tmr" data-sec="${sec}"><div class="tmc" style="--p:1"><b class="tmv">${ar(Math.floor(sec/60))}:${ar('00')}</b></div>${play?`<div class="acts"><button class="btn pri sm" data-timer="go">ابدؤوا</button><button class="btn sec sm" data-timer="reset">من جديد</button></div>`:''}</div></div>`}
@@ -79,6 +80,7 @@ const L={
  steps(d,title,items){return SL(d,[CARD(),TAG(title),W('steps',{items:items.slice(0,6)}),PEEK(d,'خطوة خطوة')],'slide')},
  tasks(d,items,note){const els=[CARD(),TAG('واجبي'),W('tasks',{items:items.slice(0,5)},{h:note?52:70}),PEEK(d,'أنتم قادرون!')];if(note)els.push(EL('box',{x:24,y:72,w:67,h:13,s:'mini'}),T('لولي الأمر: '+note,{s:'body',x:26,y:74.5,w:63,fs:3.4}));return SL(d,els,'slide')},
  mcq(d,q,tag='سؤال',say='فكّروا جيدًا!'){const [qq,pic,a,o1,o2]=q,k=LVK(q[5]);const els=[CARD(),TAG(tag)];if(k)els.push(EL('stk',{k:LVL[k].s,x:84,y:13,w:7,anim:'pop'}));return SL(d,[...els,W('mcq',{q:qq,pic,opts:shuffle([{x:a,ok:1},{x:o1},{x:o2}].filter(o=>String(o.x||'').trim()))}),PEEK(d,say)],'slide')},
+ sort(d,rows){const cats=[...new Set(rows.map(r=>String(r[2]||'').trim()).filter(Boolean))].slice(0,3);const items=shuffle(rows.filter(r=>cats.includes(String(r[2]).trim())).slice(0,8).map(r=>({t:r[0],pic:r[1],c:cats.indexOf(String(r[2]).trim())})));return SL(d,[CARD(),TAG('صنّفوا البطاقات'),W('sort',{cats,items}),PEEK(d,'اسحبوا وصنّفوا!')],'slide')},
  levels(d,title,items,say='اختاروا تحدّيكم'){return SL(d,[CARD(),TAG(title),W('levels',{items}),PEEK(d,say)],'slide')},
  mistakes(d,items){return SL(d,[CARD(),TAG('انتبهوا! أخطاء شائعة'),W('compare',{items:items.slice(0,3)}),PEEK(d,'لا نقع فيها!')],'slide')},
  model(d,items){return SL(d,[CARD(),TAG('نمذجة: مثال محلول'),W('steps',{items:items.slice(0,6)}),PEEK(d,'شاهدوا معي')],'slide')},
@@ -110,6 +112,7 @@ const FIELDS={
  goals:{l:'أهداف الدرس',cols:[{l:'الهدف'}]},points:{l:'نقاط الشرح',cols:[{l:'العنوان'},{l:'الشرح'},{l:'صورة',w:'s',img:1}]},
  examples:{l:'أمثلة توضيحية',k:1,cols:[{l:'صورة',w:'s',img:1},{l:'المثال'}]},cards:{l:'بطاقات تنقلب',cols:[{l:'الكلمة'},{l:'صورة',w:'s',img:1},{l:'معلومة'}]},
  questions:{l:'أسئلة اختيار من متعدد (اختاري المستوى للتقويم المتمايز)',cols:[{l:'السؤال'},{l:'صورة',w:'s',img:1},{l:'الإجابة الصحيحة'},{l:'خيار آخر'},{l:'خيار آخر'},{l:'المستوى',w:'m',opt:['بنائي','أنطلق','أتقدّم','أتميّز']}]},
+ sort:{l:'نشاط تصنيف بالسحب (اكتبي اسم المجموعة لكل عنصر)',cols:[{l:'العنصر'},{l:'صورة',w:'s',img:1},{l:'المجموعة'}],k:2},
  pre:{l:'تقويم قبلي: ماذا يعرف الطلاب؟',cols:[{l:'السؤال'},{l:'صورة',w:'s',img:1},{l:'الإجابة الصحيحة'},{l:'خيار آخر'},{l:'خيار آخر'}]},
  model:{l:'نمذجة: مثال محلول خطوة بخطوة',cols:[{l:'الخطوة'}]},mistakes:{l:'أخطاء شائعة وتصحيحها',cols:[{l:'الخطأ الشائع'},{l:'الصواب'}]},
  strategy:{l:'استراتيجية النشاط التعاوني',t:'text'},act:{l:'خطوات النشاط',cols:[{l:'الخطوة'}]},actTime:{l:'وقت النشاط بالدقائق',t:'num',min:1,max:20,def:3},
@@ -125,7 +128,7 @@ const FIELDS={
 const CAT_FIELDS={explain:['title','sub','hook','hookPic','pre','goals','points','examples','model','mistakes','questions','summary','diff','exit','game'],intro:['title','sub','hook','hookPic','reveal','cards','goals'],goals:['title','sub','goals','steps'],
  concepts:['title','sub','points','cards','summary'],review:['title','sub','questions','tf','order','game'],assess:['title','sub','questions','tf','order','count','exit'],tasks:['title','sub','tasks','hw','steps','note'],
  story:['title','sub','pic','story','questions','moral'],lab:['title','sub','hook','hookPic','tools','steps','tf','result'],exam:['title','sub','summary','questions','tf','tips','game'],
- lesson:['title','sub','hook','hookPic','pre','goals','points','examples','model','mistakes','strategy','act','actTime','cards','order','count','questions','tf','summary','diff','exit','hw','game']};
+ lesson:['title','sub','hook','hookPic','pre','goals','points','examples','model','mistakes','strategy','act','actTime','cards','order','count','sort','questions','tf','summary','diff','exit','hw','game']};
 const LVL={a:{n:'أنطلق',d:'دعم',s:'heart'},b:{n:'أتقدّم',d:'أساسي',s:'star'},c:{n:'أتميّز',d:'إثراء',s:'rocket'}};
 const LVK=v=>v==='أنطلق'?'a':v==='أتقدّم'?'b':v==='أتميّز'?'c':'';
 const NT=(s,n)=>{s.n=n;return s};
@@ -140,6 +143,7 @@ function fullLesson(d,c,v,P,R,goals,ex,vv,full){const Q=R('questions'),form=Q.fi
  const ms=R('mistakes');if(ms.length)P(NT(L.mistakes(d,ms),'اسألي: لماذا نقع في هذا الخطأ؟ ثم اطلبي تصحيحه من طالب.'));
  R('cards').forEach(f=>P(NT(L.flip(d,f),'اطلبي التوقع قبل قلب البطاقة.')));
  const ac=R('act');if(full&&(c.strategy||ac.length))P(NT(L.activity(d,c.strategy,ac.map(r=>r[0]),num(c.actTime)||3),'النشاط التعاوني: وزّعي الأدوار، وشغّلي المؤقت، وتجوّلي بين المجموعات لتقديم التغذية الراجعة.'));
+ {const so=R('sort');if(so.length>=2)P(NT(L.sort(d,so),'تدريب تفاعلي: يأتي طالب ويسحب بطاقة إلى مجموعتها، ويسأل الصف: هل توافقون؟ زر «إظهار الإجابة» يرتّب الكل.'))}
  R('order').forEach(o=>P(NT(L.order(d,o),'تدريب موجّه: يأتي طالب إلى السبورة ويرتّب، والبقية يتحققون.')));R('count').forEach(x=>P(NT(L.count(d,x),'تدريب موجّه: العدّ بصوت مسموع جماعيًا.')));
  fq.forEach(q=>P(NT(L.mcq(d,q,'تحقّق من فهمك'),'تقويم بنائي.')));
  if(sum.length)P(NT(L.list(d,'تذكّروا',sum.map(r=>r[0]),'check'),'الغلق: اطلبي من الطلاب إكمال الجمل قبل عرضها، ثم ارجعي إلى الأهداف.'));
@@ -171,7 +175,7 @@ function compose(cat,c,d,v=1){d=DESIGNS[d]?d:'adv';const out=[],P=s=>out.push(s)
 let PL=null;
 function openPlayer(slides,title,o={}){if(!slides||!slides.length)return toast('لا توجد شرائح للعرض');PL={slides,title,i:Math.max(0,Math.min(o.start|0,slides.length-1)),done:new Set(),d3:store3d()};
  const el=document.createElement('div');el.className='pl';el.id='pl';
- el.innerHTML=`<div class="plTop"><button class="ib" data-a="close" aria-label="إغلاق العرض">${ic('x')}</button><div class="plTitle">${esc(title||'')}</div><span class="plProg" id="plProg" aria-hidden="true"></span><button class="ib d3b" data-a="d3" aria-pressed="${!!PL.d3}" aria-label="العرض ثلاثي الأبعاد">${ic('box')}</button><button class="ib" data-a="notes" aria-pressed="false" aria-label="ملاحظات المعلمة" title="ملاحظات المعلمة">${ic('notebook-pen')}</button><button class="ib" data-a="kid" aria-label="نجمة لطالب">${ic('star')}</button><button class="ib" data-a="wheel" aria-label="عجلة الأسماء">${ic('disc-3')}</button><button class="ib" data-a="mute" aria-label="الصوت">${ic(SND.muted?'volume-x':'volume-2')}</button></div><div class="plMain" data-tilt><div class="stage ${PL.d3?'d3':''}" id="stage"></div></div><div class="plBot"><button class="btn sec" data-a="prev">${ic('arrow-right')}<span>السابق</span></button><div class="teams" id="teams"></div><button class="btn pri" data-a="next"><span>التالي</span>${ic('arrow-left')}</button></div>`;
+ el.innerHTML=`<div class="plTop"><button class="ib" data-a="close" aria-label="إغلاق العرض">${ic('x')}</button><div class="plTitle">${esc(title||'')}</div><span class="plProg" id="plProg" aria-hidden="true"></span><button class="ib d3b" data-a="d3" aria-pressed="${!!PL.d3}" aria-label="العرض ثلاثي الأبعاد">${ic('box')}</button><button class="ib" data-a="reveal" aria-label="إظهار الإجابة" title="إظهار الإجابة">${ic('eye')}</button><button class="ib" data-a="reset" aria-label="إعادة النشاط" title="إعادة النشاط">${ic('rotate-ccw')}</button><button class="ib" data-a="shuf" aria-pressed="false" aria-label="ترتيب الأسئلة عشوائيًا" title="ترتيب الأسئلة عشوائيًا">${ic('shuffle')}</button><button class="ib" data-a="notes" aria-pressed="false" aria-label="ملاحظات المعلمة" title="ملاحظات المعلمة">${ic('notebook-pen')}</button><button class="ib" data-a="kid" aria-label="نجمة لطالب">${ic('star')}</button><button class="ib" data-a="wheel" aria-label="عجلة الأسماء">${ic('disc-3')}</button><button class="ib" data-a="mute" aria-label="الصوت">${ic(SND.muted?'volume-x':'volume-2')}</button></div><div class="plMain" data-tilt><div class="stage ${PL.d3?'d3':''}" id="stage"></div></div><div class="plBot"><button class="btn sec" data-a="prev">${ic('arrow-right')}<span>السابق</span></button><div class="teams" id="teams"></div><button class="btn pri" data-a="next"><span>التالي</span>${ic('arrow-left')}</button></div>`;
  el.insertAdjacentHTML('beforeend','<aside class="plNotes" id="plNotes" hidden><b>ملاحظات المعلمة</b><p id="plNotesT"></p></aside>');document.body.appendChild(el);document.body.style.overflow='hidden';el.addEventListener('click',plClick);
  try{const r=el.requestFullscreen&&el.requestFullscreen();r&&r.catch&&r.catch(()=>{})}catch(e){}
  renderPl();icons();sway()}
@@ -196,6 +200,9 @@ function plClick(e){const t=e.target.closest('button');if(!t||t.closest('.sl.gon
  if(a==='mute'){SND.muted=!SND.muted;t.innerHTML=ic(SND.muted?'volume-x':'volume-2');icons();return}
  if(a==='wheel')return openDialog(`<h2 class="dh">عجلة الأسماء</h2>${wheelBox()}`,{onMount:d=>mountWheel($('.wheel',d)),focus:false});
  if(a==='kid')return MOT.quickStar();
+ if(a==='reset'){renderPl();toast('أُعيد النشاط');return}
+ if(a==='reveal')return plReveal();
+ if(a==='shuf'){const qi=PL.slides.map((x,k)=>x.els.some(e=>e.kind==='mcq'||e.kind==='tf')?k:-1).filter(k=>k>=0);if(qi.length<2)return toast('لا توجد أسئلة كافية للترتيب العشوائي');PL.orig=PL.orig||PL.slides.slice();const on=t.getAttribute('aria-pressed')!=='true';if(on){const qs=shuffle(qi.map(k=>PL.slides[k]));qi.forEach((k,j)=>PL.slides[k]=qs[j])}else PL.slides=PL.orig.slice();t.setAttribute('aria-pressed',on);toast(on?'رُتّبت الأسئلة عشوائيًا':'عادت الأسئلة لترتيبها');renderPl();return}
  if(a==='notes'){const n=$('#plNotes'),on=n.hidden;n.hidden=!on;t.setAttribute('aria-pressed',on);return}
  if(t.dataset.timer){const box=t.closest('.tmr'),sec=+box.dataset.sec,v=$('.tmv',box),c=$('.tmc',box);const paint=l=>{v.textContent=`${ar(Math.floor(l/60))}:${ar(String(l%60).padStart(2,'0'))}`;c.style.setProperty('--p',l/sec)};clearInterval(PL.tm);
   if(t.dataset.timer==='reset'){box._l=sec;paint(sec);box.classList.remove('end');$('[data-timer=go]',box).textContent='ابدؤوا';return}
@@ -205,6 +212,7 @@ function plClick(e){const t=e.target.closest('button');if(!t||t.closest('.sl.gon
  if(t.dataset.game)return openGameById(t.dataset.game);
  if(t.dataset.face){sfx('star');toast('شكرًا لصدقكم! كل محاولة تقرّبنا من الفهم');t.parentElement.querySelectorAll('.face').forEach(b=>b.classList.toggle('on',b===t));return}
  if(t.classList.contains('gchk')){t.closest('li').classList.toggle('ok');sfx('tap');return}
+ if(t.classList.contains('sitem')){if(t._dragged)return;return sortPick(t)}
  if(t.classList.contains('opt'))return plAnswer(t);
  if(t.classList.contains('tile'))return plTile(t);
  if(t.classList.contains('flip')){t.classList.toggle('on');sfx('flip')}}
@@ -215,10 +223,23 @@ function plTile(t){const box=t.closest('.ord');if(box.classList.contains('won')|
  empty.textContent=t.dataset.c;empty.classList.add('f');t.classList.add('u');sfx('tap');
  if(sl.every(s=>s.textContent)){if(sl.map(s=>s.textContent).join('')===box.dataset.w){box.classList.add('won');$('.ordw',box).textContent=box.dataset.w;PL.done.add(box.dataset.wid);plWin()}
   else{sfx('no');toast('الترتيب غير صحيح، جرّبوا مرة أخرى');box.classList.add('no');setTimeout(()=>{box.classList.remove('no');sl.forEach(s=>{s.textContent='';s.classList.remove('f')});$$('.tile',box).forEach(x=>x.classList.remove('u'))},700)}}}
+function plReveal(){const st=$('#stage');if(!st)return;let done=false;
+ const ok=$('.opt[data-ok="1"]',st);if(ok&&!ok.classList.contains('won')){ok.classList.add('won','rev');$$('.opt',st).forEach(b=>b.disabled=true);done=true}
+ $$('.sitem',st).forEach(b=>{const bin=$(`.sbin[data-bin="${b.dataset.sc}"] .sbz`,st);if(bin){b.classList.add('in','rev');bin.appendChild(b);done=true}});
+ $$('.flip:not(.on)',st).forEach(f=>{f.classList.add('on');done=true});
+ if(!done)return toast('لا يوجد نشاط بإجابة في هذه الشريحة');sfx('pop');toast('ظهرت الإجابة')}
+function sortPick(b){const w=b.closest('.sortw');if(b.classList.contains('in'))return;$$('.sitem',w).forEach(x=>x.classList.toggle('sel',x===b&&!b.classList.contains('sel')));sfx('tap')}
+function sortDrop(w,b,bin){if(!bin||b.classList.contains('in'))return;if(String(bin.dataset.bin)===b.dataset.sc){b.classList.remove('sel');b.classList.add('in');$('.sbz',bin).appendChild(b);sfx('pop');const left=$$('.stray .sitem',w).length;if(!left){w.classList.add('won');sfx('win');confetti(120);toast('أحسنتم! صنّفتم كل البطاقات');PL&&PL.done.add(PL.i)}}else{b.classList.add('no');sfx('no');setTimeout(()=>b.classList.remove('no'),500);toast('قريبة! جرّبوا المجموعة الأخرى')}}
+document.addEventListener('click',e=>{const bin=e.target.closest('.sbin');if(!bin||e.target.closest('.sitem'))return;const w=bin.closest('.sortw'),s=$('.sitem.sel',w);if(s)sortDrop(w,s,bin)});
+document.addEventListener('keydown',e=>{const bin=e.target.closest&&e.target.closest('.sbin');if(bin&&(e.key==='Enter'||e.key===' ')){e.preventDefault();const w=bin.closest('.sortw'),s=$('.sitem.sel',w);if(s)sortDrop(w,s,bin)}});
+document.addEventListener('pointerdown',e=>{const b=e.target.closest('.sitem');if(!b||b.classList.contains('in'))return;const w=b.closest('.sortw');const sx=e.clientX,sy=e.clientY;let gh=null;
+ const mv=ev=>{if(!gh&&Math.hypot(ev.clientX-sx,ev.clientY-sy)>8){gh=b.cloneNode(true);gh.classList.add('sghost');const r=b.getBoundingClientRect();gh.style.width=r.width+'px';document.body.appendChild(gh);b.classList.add('drag')}if(gh){gh.style.left=ev.clientX+'px';gh.style.top=ev.clientY+'px';$$('.sbin',w).forEach(x=>x.classList.remove('hov'));const t=document.elementFromPoint(ev.clientX,ev.clientY),bn=t&&t.closest('.sbin');if(bn&&w.contains(bn))bn.classList.add('hov')}};
+ const up=ev=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up);b.classList.remove('drag');if(gh){gh.remove();$$('.sbin',w).forEach(x=>x.classList.remove('hov'));const t=document.elementFromPoint(ev.clientX,ev.clientY),bn=t&&t.closest('.sbin');b._dragged=1;setTimeout(()=>b._dragged=0,50);const kill=c=>{c.stopPropagation();c.preventDefault()};addEventListener('click',kill,{capture:true,once:true});setTimeout(()=>removeEventListener('click',kill,{capture:true}),80);if(bn&&w.contains(bn))sortDrop(w,b,bn)}};
+ addEventListener('pointermove',mv);addEventListener('pointerup',up)});
 document.addEventListener('keydown',e=>{const dl=$$('.dlg');if(e.key==='Escape'&&dl.length){closeDialog(dl[dl.length-1]);return}
  if(dl.length||/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName||'')||document.activeElement?.isContentEditable)return;
  if(typeof GR!=="undefined"&&GR.on){if(e.key==='Escape')closeGame();return}
- if(!PL)return;if(e.key==='Escape')closePl();else if(e.key==='ArrowLeft'&&PL.i<PL.slides.length-1){PL.i++;renderPl(1)}else if(e.key==='ArrowRight'&&PL.i>0){PL.i--;renderPl(-1)}});
+ if(!PL)return;if(e.key==='Escape')closePl();else if(e.key===' '&&!e.target.closest('button')){e.preventDefault();if(PL.i<PL.slides.length-1){PL.i++;renderPl(1)}}else if(e.key==='ArrowLeft'&&PL.i<PL.slides.length-1){PL.i++;renderPl(1)}else if(e.key==='ArrowRight'&&PL.i>0){PL.i--;renderPl(-1)}});
 
 /* ---------- certificate & wheel ---------- */
 function certHTML(name,reason,d){d=DESIGNS[d]?d:'gdn';const D=DESIGNS[d];return `<div class="cert" style="--wc:${D.c};--wc2:${D.c2}">${scene(d)}<div class="cin">${seal(D.c)}${mascot(D.m)}<div><div class="ck">شهادة تميّز</div><div class="cname">${esc(name)}</div><p class="creason">${esc(reason)}</p><div class="cfoot"><span>مع تحيات معلمتك ${esc(ME.p&&ME.p.name||'')}</span><span>${esc(fmtDate(today()))}</span></div></div></div></div>`}
@@ -280,5 +301,5 @@ function bindForm(box,keys,data,onChange){const fire=()=>{clearTimeout(box._t);b
 function store3d(){try{return localStorage.getItem('mb3d')!=='0'}catch(e){return true}}
 let tiltHost=null,lastMove=0;
 function setTilt(st,x,y){if(!st)return;st.style.setProperty('--rx',(-(y-.5)*10).toFixed(2)+'deg');st.style.setProperty('--ry',((x-.5)*14).toFixed(2)+'deg')}
-document.addEventListener('pointermove',e=>{if(reduced())return;const h=e.target.closest&&e.target.closest('[data-tilt]');if(tiltHost&&h!==tiltHost){const o=$('.stage.d3',tiltHost);if(o){o.style.removeProperty('--rx');o.style.removeProperty('--ry')}}tiltHost=h;if(!h)return;const st=$('.stage.d3',h);if(!st)return;lastMove=Date.now();const r=st.getBoundingClientRect();setTilt(st,Math.min(1,Math.max(0,(e.clientX-r.left)/r.width)),Math.min(1,Math.max(0,(e.clientY-r.top)/r.height)))},{passive:true});
+document.addEventListener('pointermove',e=>{if(reduced()||document.querySelector('.sghost'))return;const h=e.target.closest&&e.target.closest('[data-tilt]');if(tiltHost&&h!==tiltHost){const o=$('.stage.d3',tiltHost);if(o){o.style.removeProperty('--rx');o.style.removeProperty('--ry')}}tiltHost=h;if(!h)return;const st=$('.stage.d3',h);if(!st)return;lastMove=Date.now();const r=st.getBoundingClientRect();setTilt(st,Math.min(1,Math.max(0,(e.clientX-r.left)/r.width)),Math.min(1,Math.max(0,(e.clientY-r.top)/r.height)))},{passive:true});
 function sway(){if(reduced())return;const f=t=>{if(!PL)return;const st=$('#stage');if(st&&PL.d3&&Date.now()-lastMove>2500)setTilt(st,.5+Math.sin(t/2600)*.22,.5+Math.cos(t/3400)*.16);requestAnimationFrame(f)};requestAnimationFrame(f)}
