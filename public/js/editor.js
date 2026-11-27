@@ -149,17 +149,21 @@ function smartDialog(prefill){const st={cat:(prefill&&prefill.cat)||'explain',d:
 
 /* ---------- PowerPoint export ---------- */
 function loadScript(src){return new Promise((res,rej)=>{if($(`script[src="${src}"]`))return res();const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s)})}
-function svgPng(svg,w,h){return new Promise(res=>{const x=svg.replace('<svg ',`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" `);const im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(im,0,0,w,h);try{res(c.toDataURL('image/png'))}catch(e){res(null)}};im.onerror=()=>res(null);im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(x)})}
+const okImg=d=>typeof d==='string'&&/^data:image\/(png|jpe?g|gif);base64,[A-Za-z0-9+/=]{200,}$/.test(d);
+let _svgC=null;
+function svgPng(svg,w,h){return new Promise(res=>{let done=false;const fin=v=>{if(!done){done=true;res(okImg(v)?v:null)}};setTimeout(()=>fin(null),6000);
+ let x=String(svg||'');if(!/^\s*<svg[\s>]/i.test(x))return fin(null);x=x.replace(/<svg\b([^>]*)>/i,(m,a)=>`<svg${/xmlns=/.test(a)?'':' xmlns="http://www.w3.org/2000/svg"'}${a.replace(/\s(width|height)="[^"]*"/g,'')} width="${w}" height="${h}">`);
+ const im=new Image();im.onload=()=>{try{const c=_svgC||(_svgC=document.createElement('canvas'));c.width=w;c.height=h;const g=c.getContext('2d');g.clearRect(0,0,w,h);g.drawImage(im,0,0,w,h);fin(c.toDataURL('image/png'))}catch(e){fin(null)}};im.onerror=()=>fin(null);im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(x)})}
 async function exportPptx(Ls){if(!lim('export'))return needPlan('تصدير PowerPoint متاح في الباقة الأساسية فما فوق');toast('جارٍ تجهيز ملف PowerPoint…');
- try{await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pptxgenjs/3.12.0/pptxgen.bundle.js')}catch(e){return toast('تعذّر تحميل أداة التصدير، حاولي لاحقًا')}
- try{const P=new PptxGenJS();P.layout='LAYOUT_16x9';P.rtlMode=true;P.title=Ls.title;const H=5.625,Wd=10,pt=v=>Math.max(8,Math.round(num(v)*H*72/100));
+ {let ok=false;for(const u of['https://cdnjs.cloudflare.com/ajax/libs/pptxgenjs/3.12.0/pptxgen.bundle.js','https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js']){try{await loadScript(u);if(window.PptxGenJS){ok=true;break}}catch(e){}}if(!ok)return toast('تعذّر تحميل أداة التصدير، تأكدي من الاتصال وحاولي مرة أخرى')}
+ try{const P=new PptxGenJS();let skip=0;P.layout='LAYOUT_16x9';P.rtlMode=true;P.title=Ls.title;const H=5.625,Wd=10,pt=v=>Math.max(8,Math.round(num(v)*H*72/100));
   for(const s of Ls.slides){const sl=P.addSlide();const D=DESIGNS[s.d]||DESIGNS.adv;
-   if(s.bg!=null&&GRADS[s.bg]){const m=GRADS[s.bg].match(/#[0-9a-f]{6}/i);sl.background={color:(m?m[0]:'#ffffff').slice(1)}}else{const bg=await svgPng(scene(s.d||'adv'),1600,900);if(bg)sl.background={data:bg.replace(/^data:/,'')}}
+   if(s.bg!=null&&GRADS[s.bg]){const m=GRADS[s.bg].match(/#[0-9a-f]{6}/i);sl.background={color:(m?m[0]:'#ffffff').slice(1)}}else{const bg=await svgPng(scene(s.d||'adv'),1280,720);if(bg)sl.background={data:bg.replace(/^data:/,'')};else sl.background={color:((DESIGNS[s.d]||DESIGNS.adv).c2||'#ffffff').slice(1)}}
    if(s.n&&sl.addNotes)sl.addNotes(s.n);
-   for(const e of (s.els||[]).slice().sort((a,b)=>(a.z|0)-(b.z|0))){const x=num(e.x)/100*Wd,y=num(e.y)/100*H,w=(num(e.w)||20)/100*Wd,h=e.h?num(e.h)/100*H:null;const tx={fontFace:'Arial',rtlMode:true,align:e.al==='left'?'left':e.al==='center'?'center':'right',valign:'top'};
+   for(const e of (s.els||[]).slice().sort((a,b)=>(a.z|0)-(b.z|0))){try{const x=num(e.x)/100*Wd,y=num(e.y)/100*H,w=(num(e.w)||20)/100*Wd,h=e.h?num(e.h)/100*H:null;const tx={fontFace:'Arial',rtlMode:true,align:e.al==='left'?'left':e.al==='center'?'center':'right',valign:'top'};
     if(e.t==='box'){sl.addShape(P.ShapeType.roundRect,{x,y,w,h:h||1,fill:{color:e.s==='note'?'FEF9C3':'FFFFFF',transparency:e.s==='card'||e.s==='cover'?6:0},rectRadius:.2,line:{color:D.c3.slice(1),width:1}});continue}
     if(e.t==='text'){const tag=e.s==='tag'||e.s==='kick';sl.addText(String(e.txt||''),{...tx,x,y,w,h:h||Math.max(.4,pt(e.fs)/72*1.6*Math.ceil(String(e.txt||'').length/Math.max(8,w*7))),fontSize:pt(e.fs),bold:e.s==='title'||!!e.b,color:(hex(e.c)||(tag&&e.s==='tag'?'#ffffff':'#1f2937')).slice(1),fill:e.s==='tag'?{color:D.c.slice(1)}:undefined});continue}
-    if(e.t==='pic'){const src=safeSrc(e.src);if(src&&src.startsWith('data:'))sl.addImage({data:src.replace(/^data:/,''),x,y,w,h:w*.75});else sl.addText(e.emo||'⭐',{x,y,w,h:w*1.1,fontSize:Math.round(w*72*.7),align:'center'});continue}
+    if(e.t==='pic'){const src=safeSrc(e.src);if(okImg(src))sl.addImage({data:src.replace(/^data:/,''),x,y,w,h:w*.75});else sl.addText(e.emo||'⭐',{x,y,w,h:w*1.1,fontSize:Math.round(w*72*.7),align:'center'});continue}
     if(e.t==='stk'||e.t==='masc'){const svg=e.t==='stk'?(STK[e.k]||STK.star):mascot(e.k||D.m);const ar_=e.t==='masc'?256/200:1;const png=await svgPng(svg,400,Math.round(400*ar_));if(png)sl.addImage({data:png.replace(/^data:/,''),x,y,w,h:w*ar_*Wd/Wd});if(e.say)sl.addText(e.say,{...tx,x:x+w*.3,y:Math.max(0,y-.4),w:w*1.6,h:.35,fontSize:11,fill:{color:'FFFFFF'},color:'1F2937',align:'center'});continue}
     if(e.t==='w'){const wd=e.data||{};let lines=[];
      if(e.kind==='mcq'){sl.addText(String(wd.q||''),{...tx,x,y,w,h:.6,fontSize:22,bold:true,color:'1F2937',align:'center'});(wd.opts||[]).forEach((o,i)=>{const n=(wd.opts||[]).length,bw=w/n-.15;sl.addText((wd.tf?'':'أبجد'[i]+'. ')+String(o.x||o.p||''),{...tx,x:x+i*(bw+.15),y:y+(h||3)*.55,w:bw,h:.6,fontSize:18,bold:true,align:'center',color:'1F2937',fill:{color:'FFFFFF'},line:{color:'CBD5E1',width:1.5}})});continue}
@@ -171,7 +175,7 @@ async function exportPptx(Ls){if(!lim('export'))return needPlan('تصدير Powe
      else if(e.kind==='compare')lines=(wd.items||[]).flatMap(r=>['✗ '+r[0],'✓ '+r[1],'']);
      else if(e.kind==='timer')lines=[`${wd.strategy||'نشاط تعاوني'} · ${ar(num(wd.min)||3)} دقائق`,...(wd.steps||[]).map((t,i)=>ar(i+1)+'. '+t)];
      else if(e.kind==='game'){const g=findGame(wd.ref);lines=['لعبة الدرس: '+(g?g.title:'')]}else if(e.kind==='podium')lines=['أحسنتم يا أبطال! 🏆'];
-     sl.addText(lines.join('\n'),{...tx,x,y,w,h:h||3,fontSize:20,color:'1F2937',paraSpaceAfter:6})}}}
+     sl.addText(lines.join('\n'),{...tx,x,y,w,h:h||3,fontSize:20,color:'1F2937',paraSpaceAfter:6})}}catch(err){skip++;console.warn('pptx element skipped',e&&e.t,err)}}}
   const blob=await P.write({outputType:'blob'}),fn=(Ls.title||'عرض').replace(/[\\/:*?"<>|]/g,'')+'.pptx';
-  if(S.dl){try{await S.dl.save({filename:fn,data:blob});toast('تم حفظ الملف')}catch(e){if(e&&e.code!=='declined')toast('تعذّر حفظ الملف هنا')}}else{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fn;a.click()}}
- catch(e){console.error(e);toast('حدث خطأ أثناء التصدير')}}
+  if(S.dl){try{await S.dl.save({filename:fn,data:blob});toast('تم حفظ الملف')}catch(e){if(e&&e.code!=='declined')toast('تعذّر حفظ الملف هنا')}}else{const a=document.createElement('a'),u=URL.createObjectURL(blob);a.href=u;a.download=fn;a.rel='noopener';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(u);a.remove()},4000);toast(skip?`نُزّل الملف (تعذّر نقل ${ar(skip)} عنصر)`:'نُزّل ملف PowerPoint')}}
+ catch(e){console.error(e);toast('حدث خطأ أثناء التصدير'+(e&&e.message?' ('+String(e.message).slice(0,60)+')':''))}}
