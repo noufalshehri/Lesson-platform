@@ -1,10 +1,10 @@
 'use strict';
 /* app.js: routing, header, boot */
 const ROUTES={home:[vHome,null,0],templates:[vTemplates,()=>tpPanel(),0],lessons:[vLessons,()=>lpPanel(),0],games:[vGames,()=>gpPanel(),0],studio:[vStudio,()=>{bindStudio();stRender()},0,'studio'],
- class:[vClassroom,()=>{bindClassroom();crBar();crPanel()},1,'cr'],motivation:[vMotivation,()=>{bindMotivation();clsBar();motPanel()},1,'mot'],pricing:[vPricing,null,0],journey:[vJourney,()=>jMount(),0],dashboard:[vDashboard,()=>dbPanel(),1],admin:[vAdmin,()=>{bindAdmin();adPanel()},0,'admin']};
-const NAV=[['home','الرئيسية'],['templates','القوالب'],['lessons','الدروس'],['games','الألعاب'],['studio','الاستوديو'],['class','فصلي'],['motivation','التحفيز'],['pricing','الباقات']];
+ class:[vClassroom,()=>{bindClassroom();crBar();crPanel()},1,'cr'],motivation:[vMotivation,()=>{bindMotivation();clsBar();motPanel()},1,'mot'],pricing:[vPricing,null,0],journey:[vJourney,()=>jMount(),0],dashboard:[vDashboard,()=>dbPanel(),1],qr:[vQR,()=>qrMount(),0],admin:[vAdmin,()=>{bindAdmin();adPanel()},0,'admin']};
+const NAV=[['home','الرئيسية'],['templates','القوالب'],['lessons','الدروس'],['games','الألعاب'],['studio','الاستوديو'],['class','فصلي'],['motivation','التحفيز'],['qr','صانع QR'],['pricing','الباقات']];
 const TABS=[['home','الرئيسية','house'],['lessons','الدروس','book-open-check'],['studio','الاستوديو','palette'],['games','الألعاب','gamepad-2'],['class','فصلي','users-round']];
-const NAVI={home:'house',templates:'layout-template',lessons:'book-open-check',games:'gamepad-2',studio:'palette',class:'users-round',motivation:'trophy',pricing:'badge-check',admin:'shield',dashboard:'circle-user-round'};
+const NAVI={home:'house',templates:'layout-template',lessons:'book-open-check',games:'gamepad-2',studio:'palette',class:'users-round',motivation:'trophy',pricing:'badge-check',qr:'qr-code',admin:'shield',dashboard:'circle-user-round'};
 function hdr(){const v=(location.hash||'#home').slice(1).split('-')[0],all=[...NAV,...(S.admin?[['admin','الإدارة']]:[])];
  const PRIM=['home','lessons','templates','games','studio','class'],more=all.filter(([k])=>!PRIM.includes(k)),lnk=([k,l])=>`<a href="#${k}" ${k===v?'aria-current="page" class="on"':''}>${l}</a>`;
  $('#nav').innerHTML=all.filter(([k])=>PRIM.includes(k)).map(lnk).join('')+(more.length?`<details class="nmore"><summary class="${more.some(([k])=>k===v)?'on':''}">المزيد${ic('chevron-down')}</summary><div class="nmenu">${more.map(([k,l])=>`<a href="#${k}" ${k===v?'class="on"':''}>${ic(NAVI[k]||'circle')}${l}</a>`).join('')}</div></details>`:'');
