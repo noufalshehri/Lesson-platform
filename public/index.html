@@ -14,9 +14,17 @@
   <a class="logo" href="#home" aria-label="مضبوط دروس"><img src="img/logo.svg" alt="مضبوط" width="80" height="34"><span>دروس</span></a>
   <nav class="nav" id="nav" aria-label="التنقل الرئيسي"></nav>
   <div id="acct"></div>
+  <button class="ib menuBtn" id="menuBtn" aria-label="القائمة" aria-expanded="false" aria-controls="sheet"><i data-lucide="menu"></i></button>
 </header>
 <main id="app"></main>
-<footer class="ft"><span>«مضبوط» · المكتبة الأولى للمعلمة السعودية</span><span>نسخة أولية: الدفع تجريبي، والمحتوى يحتاج مراجعة مطابقة المنهج قبل الإطلاق</span></footer>
+<footer class="ft2"><div class="wrap">
+ <div class="fb"><img src="img/logo.svg" alt="مضبوط" width="80" height="34"><p>منصة المعلمة السعودية لرياض الأطفال والابتدائي: دروس كاملة، وعروض تفاعلية، وألعاب، وإدارة صفية في مكان واحد.</p></div>
+ <div><h4>المنصة</h4><ul><li><a href="#lessons">الدروس الجاهزة</a></li><li><a href="#templates">القوالب</a></li><li><a href="#games">الألعاب</a></li><li><a href="#studio">الاستوديو</a></li></ul></div>
+ <div><h4>في الصف</h4><ul><li><a href="#class">فصلي</a></li><li><a href="#motivation">التحفيز</a></li><li><a href="#dashboard">حسابي</a></li><li><a href="#pricing">الباقات</a></li></ul></div>
+ <div><h4>مضبوط</h4><ul><li><a href="#faq">الأسئلة الشائعة</a></li><li><a href="https://madbot.store" target="_blank" rel="noopener">متجر مضبوط</a></li><li><a href="https://enjaz.madbot.store" target="_blank" rel="noopener">ملف الإنجاز</a></li></ul></div>
+</div><div class="fl"><span>© ٢٠٢٦ مضبوط</span><span>نسخة أولية: الدفع تجريبي، والمحتوى يُراجَع لمطابقة المنهج قبل الإطلاق</span></div></footer>
+<nav class="tabbar" id="tabbar" aria-label="التنقل السفلي"></nav>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="القائمة"><div class="scrim" data-shclose></div><div class="panel" id="sheetPanel"></div></div>
 <canvas id="fx"></canvas>
 <div id="toast" role="status" aria-live="polite"></div>
 <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
