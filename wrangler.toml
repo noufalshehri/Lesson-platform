@@ -5,7 +5,7 @@ pages_build_output_dir = "public"
 
 [vars]
 # Comma-separated emails that get the admin dashboard
-ADMIN_EMAILS = "admin@example.com"
+ADMIN_EMAILS = ""
 # "true" turns on the demo checkout (no money is taken). Keep "false" in production until a real gateway is connected.
 DEMO_PAYMENTS = "true"
 
