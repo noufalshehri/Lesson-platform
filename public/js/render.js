@@ -41,7 +41,10 @@ function widget(e,d,ctx){const w=e.data||{},done=!!(ctx.done&&ctx.done.has(e.id)
   case 'tasks':return `<ul class="wg gl tk">${(w.items||[]).map(t=>`<li><button class="gchk" aria-label="أنجزت المهمة">${ICO.ok}</button><span>${esc(t)}</span></li>`).join('')}</ul>`;
   case 'steps':return `<ol class="wg stp">${(w.items||[]).map((t,i)=>`<li><b>${ar(i+1)}</b><span>${esc(t)}</span></li>`).join('')}</ol>`;
   case 'cards':return `<div class="wg exg">${(w.items||[]).map(t=>`<div class="exc"><div class="exp">${picHTML(t.pic)}</div><span>${esc(t.txt)}</span></div>`).join('')}</div>`;
-  case 'scale':return `<div class="wg scale"><h3 class="kq">${esc(w.q||'كيف كان فهمك للدرس؟')}</h3><div class="faces">${[['😀','فهمت جيدًا'],['🙂','فهمت أغلبه'],['🤔','أحتاج مساعدة']].map(([f,l])=>`<button class="face" data-face="${esc(l)}"><span>${f}</span><small>${l}</small></button>`).join('')}</div></div>`;
+  case 'levels':return `<div class="wg lvw">${(w.items||[]).map(t=>{const k=LVK(t.lv);return `<div class="lvc lv-${k}"><div class="lvh"><span class="lvi">${STK[LVL[k].s]}</span><b>${esc(LVL[k].n)}</b><small>${esc(LVL[k].d)}</small></div><p>${esc(t.t)}</p></div>`}).join('')}</div>`;
+  case 'compare':return `<div class="wg cmpw"><div class="cmph"><span class="cx">${ICO.no} خطأ شائع</span><span class="cv">${ICO.ok} الصواب</span></div>${(w.items||[]).map(r=>`<div class="cmpr"><p class="cx">${esc(r[0])}</p><p class="cv">${esc(r[1])}</p></div>`).join('')}</div>`;
+  case 'timer':{const sec=Math.max(30,Math.min(1200,(num(w.min)||3)*60));return `<div class="wg tmw"><div class="tml"><span class="kick">استراتيجية</span><h3 class="kq">${esc(w.strategy||'نشاط تعاوني')}</h3><ol class="stp">${(w.steps||[]).map((t,i)=>`<li><b>${ar(i+1)}</b><span>${esc(t)}</span></li>`).join('')}</ol></div><div class="tmr" data-sec="${sec}"><div class="tmc" style="--p:1"><b class="tmv">${ar(Math.floor(sec/60))}:${ar('00')}</b></div>${play?`<div class="acts"><button class="btn pri sm" data-timer="go">ابدؤوا</button><button class="btn sec sm" data-timer="reset">من جديد</button></div>`:''}</div></div>`}
+  case 'scale':return `<div class="wg scale">${w.p?`<div class="exitp"><span class="kick">بطاقة الخروج</span><h3 class="kq">${esc(w.p)}</h3></div>`:''}<h3 class="kq ${w.p?'sm':''}">${esc(w.q||'كيف كان فهمك للدرس؟')}</h3><div class="faces">${[['😀','فهمت جيدًا'],['🙂','فهمت أغلبه'],['🤔','أحتاج مساعدة']].map(([f,l])=>`<button class="face" data-face="${esc(l)}"><span>${f}</span><small>${l}</small></button>`).join('')}</div></div>`;
   case 'game':{const g=findGame(w.ref);return `<div class="wg gm"><div class="gmi">${g?gameArt(g.type):STK.gift}</div><div><span class="kick">لعبة الدرس</span><h3 class="kq">${esc(g?g.title:'لعبة')}</h3><p class="hint">${esc(g?GTYPES[g.type].name:'')}</p>${play?`<button class="btn pri gmb" data-game="${esc(w.ref)}">ابدؤوا اللعبة</button>`:''}</div></div>`}
   case 'podium':{const r=((typeof MOT!=="undefined"?MOT.teams():[])).slice().sort((a,b)=>b.s-a.s).slice(0,3);return `<div class="wg endv"><h2 class="kt">أحسنتم يا أبطال!</h2><div class="podium">${[1,0,2].map(k=>r[k]?`<div class="pod p${k+1}">${k===0?TROPHY:''}<span class="pn">${esc(r[k].n)}</span><span class="ps">${(DESIGNS[d]||DESIGNS.adv).reward} ${ar(r[k].s)}</span><div class="pb">${ar(k+1)}</div></div>`:'').join('')}</div>${play?`<button class="btn pri" data-a="cert">شهادة للفريق الفائز</button>`:''}</div>`}
  }return ''}
@@ -75,7 +78,13 @@ const L={
  list(d,title,items,ico='star',say='تذكّروا'){return SL(d,[CARD(),TAG(title),W('list',{items:items.slice(0,6),ico}),PEEK(d,say)],'fade')},
  steps(d,title,items){return SL(d,[CARD(),TAG(title),W('steps',{items:items.slice(0,6)}),PEEK(d,'خطوة خطوة')],'slide')},
  tasks(d,items,note){const els=[CARD(),TAG('واجبي'),W('tasks',{items:items.slice(0,5)},{h:note?52:70}),PEEK(d,'أنتم قادرون!')];if(note)els.push(EL('box',{x:24,y:72,w:67,h:13,s:'mini'}),T('لولي الأمر: '+note,{s:'body',x:26,y:74.5,w:63,fs:3.4}));return SL(d,els,'slide')},
- mcq(d,q){const [qq,pic,a,o1,o2]=q;return SL(d,[CARD(),TAG('سؤال'),W('mcq',{q:qq,pic,opts:shuffle([{x:a,ok:1},{x:o1},{x:o2}].filter(o=>String(o.x||'').trim()))}),PEEK(d,'فكّروا جيدًا!')],'slide')},
+ mcq(d,q,tag='سؤال',say='فكّروا جيدًا!'){const [qq,pic,a,o1,o2]=q,k=LVK(q[5]);const els=[CARD(),TAG(tag)];if(k)els.push(EL('stk',{k:LVL[k].s,x:84,y:13,w:7,anim:'pop'}));return SL(d,[...els,W('mcq',{q:qq,pic,opts:shuffle([{x:a,ok:1},{x:o1},{x:o2}].filter(o=>String(o.x||'').trim()))}),PEEK(d,say)],'slide')},
+ levels(d,title,items,say='اختاروا تحدّيكم'){return SL(d,[CARD(),TAG(title),W('levels',{items}),PEEK(d,say)],'slide')},
+ mistakes(d,items){return SL(d,[CARD(),TAG('انتبهوا! أخطاء شائعة'),W('compare',{items:items.slice(0,3)}),PEEK(d,'لا نقع فيها!')],'slide')},
+ model(d,items){return SL(d,[CARD(),TAG('نمذجة: مثال محلول'),W('steps',{items:items.slice(0,6)}),PEEK(d,'شاهدوا معي')],'slide')},
+ activity(d,strategy,steps,min){return SL(d,[CARD(),TAG('نشاط تعاوني'),W('timer',{strategy,steps:steps.slice(0,4),min}),PEEK(d,'نعمل معًا')],'zoom')},
+ exit(d,p){return SL(d,[CARD(),TAG('تقويم ختامي'),W('scale',{p,q:'كيف كان فهمك للدرس اليوم؟'}),PEEK(d,'قبل أن نخرج')],'fade')},
+ phase(d,n,title,sub){return SL(d,[EL('box',{x:14,y:24,w:72,h:52,s:'cover'}),T(ar(n),{s:'kick',x:20,y:32,w:60,fs:5,al:'center'}),T(title,{s:'title',x:20,y:40,w:60,fs:9,al:'center',anim:'pop'}),T(sub,{s:'body',x:20,y:60,w:60,fs:4,al:'center',c:'#475569'})],'zoom')},
  mcqPic(d,q,L){return SL(d,[CARD(),TAG('سؤال'),W('mcq',q),PEEK(d,'أيّها الصحيح؟')],'slide')},
  tf(d,t){const [q,pic,ans]=t,no=ans==='خطأ';return SL(d,[CARD(),TAG('صح أم خطأ؟'),W('mcq',{q,pic,tf:1,opts:[{x:'صح',ok:!no},{x:'خطأ',ok:no}]}),PEEK(d,'صح أم خطأ؟')],'slide')},
  order(d,o){const word=String(o[0]||'').replace(/\s/g,''),Ls=Array.from(word);let m=shuffle(Ls),k=0;while(Ls.length>1&&m.join('')===word&&k++<10)m=shuffle(Ls);return SL(d,[CARD(),TAG('رتّب الحروف'),W('order',{word,pic:o[1],mix:m}),PEEK(d,'رتّبوها!')],'slide')},
@@ -100,7 +109,12 @@ const FIELDS={
  hook:{l:'سؤال التهيئة',t:'text'},hookPic:{l:'صورة التهيئة',t:'pic'},reveal:{l:'الإجابة المفاجئة (اختياري)',t:'text'},
  goals:{l:'أهداف الدرس',cols:[{l:'الهدف'}]},points:{l:'نقاط الشرح',cols:[{l:'العنوان'},{l:'الشرح'},{l:'صورة',w:'s',img:1}]},
  examples:{l:'أمثلة توضيحية',k:1,cols:[{l:'صورة',w:'s',img:1},{l:'المثال'}]},cards:{l:'بطاقات تنقلب',cols:[{l:'الكلمة'},{l:'صورة',w:'s',img:1},{l:'معلومة'}]},
- questions:{l:'أسئلة اختيار من متعدد',cols:[{l:'السؤال'},{l:'صورة',w:'s',img:1},{l:'الإجابة الصحيحة'},{l:'خيار آخر'},{l:'خيار آخر'}]},
+ questions:{l:'أسئلة اختيار من متعدد (اختاري المستوى للتقويم المتمايز)',cols:[{l:'السؤال'},{l:'صورة',w:'s',img:1},{l:'الإجابة الصحيحة'},{l:'خيار آخر'},{l:'خيار آخر'},{l:'المستوى',w:'m',opt:['بنائي','أنطلق','أتقدّم','أتميّز']}]},
+ pre:{l:'تقويم قبلي: ماذا يعرف الطلاب؟',cols:[{l:'السؤال'},{l:'صورة',w:'s',img:1},{l:'الإجابة الصحيحة'},{l:'خيار آخر'},{l:'خيار آخر'}]},
+ model:{l:'نمذجة: مثال محلول خطوة بخطوة',cols:[{l:'الخطوة'}]},mistakes:{l:'أخطاء شائعة وتصحيحها',cols:[{l:'الخطأ الشائع'},{l:'الصواب'}]},
+ strategy:{l:'استراتيجية النشاط التعاوني',t:'text'},act:{l:'خطوات النشاط',cols:[{l:'الخطوة'}]},actTime:{l:'وقت النشاط بالدقائق',t:'num',min:1,max:20,def:3},
+ diff:{l:'أنشطة متمايزة حسب المستوى',cols:[{l:'المستوى',w:'m',opt:['أنطلق','أتقدّم','أتميّز']},{l:'النشاط'}]},
+ exit:{l:'بطاقة الخروج',t:'text'},hw:{l:'واجب متمايز',cols:[{l:'المستوى',w:'m',opt:['أنطلق','أتقدّم','أتميّز']},{l:'الواجب'}]},
  tf:{l:'صح أم خطأ',cols:[{l:'العبارة'},{l:'صورة',w:'s',img:1},{l:'الإجابة',w:'m',opt:['صح','خطأ']}]},
  order:{l:'رتّب الحروف',cols:[{l:'الكلمة'},{l:'صورة',w:'s',img:1}]},count:{l:'عدّ وأجب',k:1,cols:[{l:'صورة',w:'s',img:1},{l:'العدد'}]},
  story:{l:'صفحات القصة',cols:[{l:'نص الصفحة'},{l:'صورة',w:'s',img:1}]},moral:{l:'العبرة من القصة',t:'text'},
@@ -108,25 +122,47 @@ const FIELDS={
  tasks:{l:'المهام',cols:[{l:'المهمة'}]},note:{l:'ملاحظة لولي الأمر',t:'text'},tips:{l:'نصائح المراجعة',cols:[{l:'النصيحة'}]},summary:{l:'ملخص الدرس',cols:[{l:'نقطة'}]},
  game:{l:'لعبة مرتبطة بالدرس',t:'game'}
 };
-const CAT_FIELDS={explain:['title','sub','hook','hookPic','goals','points','examples','questions','summary','game'],intro:['title','sub','hook','hookPic','reveal','cards','goals'],goals:['title','sub','goals','steps'],
- concepts:['title','sub','points','cards','summary'],review:['title','sub','questions','tf','order','game'],assess:['title','sub','questions','tf','order','count'],tasks:['title','sub','tasks','steps','note'],
+const CAT_FIELDS={explain:['title','sub','hook','hookPic','pre','goals','points','examples','model','mistakes','questions','summary','diff','exit','game'],intro:['title','sub','hook','hookPic','reveal','cards','goals'],goals:['title','sub','goals','steps'],
+ concepts:['title','sub','points','cards','summary'],review:['title','sub','questions','tf','order','game'],assess:['title','sub','questions','tf','order','count','exit'],tasks:['title','sub','tasks','hw','steps','note'],
  story:['title','sub','pic','story','questions','moral'],lab:['title','sub','hook','hookPic','tools','steps','tf','result'],exam:['title','sub','summary','questions','tf','tips','game'],
- lesson:['title','sub','hook','hookPic','goals','points','examples','cards','order','count','questions','tf','game']};
+ lesson:['title','sub','hook','hookPic','pre','goals','points','examples','model','mistakes','strategy','act','actTime','cards','order','count','questions','tf','summary','diff','exit','hw','game']};
+const LVL={a:{n:'أنطلق',d:'دعم',s:'heart'},b:{n:'أتقدّم',d:'أساسي',s:'star'},c:{n:'أتميّز',d:'إثراء',s:'rocket'}};
+const LVK=v=>v==='أنطلق'?'a':v==='أتقدّم'?'b':v==='أتميّز'?'c':'';
+const NT=(s,n)=>{s.n=n;return s};
+/* full lesson following the lesson-plan stages, with teacher notes on every slide */
+function fullLesson(d,c,v,P,R,goals,ex,vv,full){const Q=R('questions'),form=Q.filter(q=>!LVK(q[5])),lvQ=Q.filter(q=>LVK(q[5])).sort((a,b)=>LVK(a[5]).localeCompare(LVK(b[5]))),pts=R('points'),diff=R('diff',1),hw=R('hw',1),sum=R('summary');let n=0;
+ if(c.hook)P(NT(L.hook(d,c,1),'التهيئة (دقيقتان): اطرحي السؤال، واستمعي لإجابات ثلاثة طلاب دون تصحيح، ثم اربطي إجاباتهم بموضوع الدرس.'));
+ R('pre').forEach(q=>P(NT(L.mcq(d,q,'تقويم قبلي: ماذا أعرف؟','ماذا تعرفون؟'),'التقويم القبلي: لا تُحتسب الإجابة. لاحظي من يعرف المفهوم ومن يحتاج دعمًا لتوزّعي الأنشطة المتمايزة لاحقًا.')));
+ if(goals.length)P(NT(L.goals(d,goals,v),'اقرئي الأهداف بصوت واضح، واطلبي من الطلاب ترديدها. سنعود إليها في الغلق لنتحقق منها.'));
+ const fq=form.slice();pts.forEach((p,i)=>{P(NT(L.concept(d,p,vv(i)),'العرض: اشرحي المفهوم بمثال من حياة الطلاب، واطلبي من طالب أن يعيده بأسلوبه.'));const q=fq.shift();if(q)P(NT(L.mcq(d,q,'تحقّق من فهمك','من يعرف الجواب؟'),'تقويم بنائي: استخدمي الرؤوس المرقّمة أو بطاقات الإجابة ليجيب الجميع، وأعيدي الشرح إن أخطأ أكثر من ثلث الصف.'))});
+ if(ex.length)P(NT(L.cards(d,ex,'أمثلة'),'اعرضي الأمثلة واطلبي من الطلاب مثالًا إضافيًا من عندهم.'));
+ const md=R('model');if(md.length)P(NT(L.model(d,md.map(r=>r[0])),'النمذجة (أنا أعمل ← نعمل معًا ← أنت تعمل): نفّذي الخطوات أمامهم بصوت مسموع، ثم كرّريها معهم، ثم اطلبي من طالب تنفيذها وحده.'));
+ const ms=R('mistakes');if(ms.length)P(NT(L.mistakes(d,ms),'اسألي: لماذا نقع في هذا الخطأ؟ ثم اطلبي تصحيحه من طالب.'));
+ R('cards').forEach(f=>P(NT(L.flip(d,f),'اطلبي التوقع قبل قلب البطاقة.')));
+ const ac=R('act');if(full&&(c.strategy||ac.length))P(NT(L.activity(d,c.strategy,ac.map(r=>r[0]),num(c.actTime)||3),'النشاط التعاوني: وزّعي الأدوار، وشغّلي المؤقت، وتجوّلي بين المجموعات لتقديم التغذية الراجعة.'));
+ R('order').forEach(o=>P(NT(L.order(d,o),'تدريب موجّه: يأتي طالب إلى السبورة ويرتّب، والبقية يتحققون.')));R('count').forEach(x=>P(NT(L.count(d,x),'تدريب موجّه: العدّ بصوت مسموع جماعيًا.')));
+ fq.forEach(q=>P(NT(L.mcq(d,q,'تحقّق من فهمك'),'تقويم بنائي.')));
+ if(sum.length)P(NT(L.list(d,'تذكّروا',sum.map(r=>r[0]),'check'),'الغلق: اطلبي من الطلاب إكمال الجمل قبل عرضها، ثم ارجعي إلى الأهداف.'));
+ if(diff.length)P(NT(L.levels(d,'أنشطة متمايزة',diff.map(r=>({lv:r[0],t:r[1]}))),'التعليم المتمايز: وجّهي كل طالب للمستوى المناسب حسب التقويم القبلي والبنائي، واسمحي بالانتقال للمستوى الأعلى عند الإنجاز. أنطلق = دعم، أتقدّم = المستوى الأساسي، أتميّز = إثراء.'));
+ lvQ.forEach(q=>P(NT(L.mcq(d,q,'تقويم متمايز · '+q[5],{أنطلق:'سؤال الانطلاق',أتقدّم:'سؤال التقدّم',أتميّز:'تحدّي التميّز'}[q[5]]),`تقويم ختامي متمايز (${q[5]} · ${LVL[LVK(q[5])].d}): وجّهي السؤال لطلاب هذا المستوى أولًا، ثم افتحيه للجميع.`)));
+ R('tf').forEach(t=>P(NT(L.tf(d,t),'تقويم ختامي: اطلبي الإجابة بالإبهام للأعلى أو للأسفل ليشارك الجميع.')));
+ if(c.exit)P(NT(L.exit(d,c.exit),'بطاقة الخروج: يجيب كل طالب ويختار وجهًا يعبّر عن فهمه. راجعي البطاقات لتخطيط الحصة القادمة.'));else if(full)P(L.scale(d));
+ if(hw.length)P(NT(L.levels(d,'واجب متمايز',hw.map(r=>({lv:r[0],t:r[1]})),'اختاروا واجبكم'),'الواجب المتمايز: كل طالب يختار مستوى واجبه أو تحدّدينه له، والتميّز اختياري للجميع.'))}
 function compose(cat,c,d,v=1){d=DESIGNS[d]?d:'adv';const out=[],P=s=>out.push(s),R=(k,i=0)=>rowsOK(c[k],FIELDS[k]&&FIELDS[k].k!=null?FIELDS[k].k:i);
  const goals=R('goals').map(r=>r[0]),ex=R('examples').map(r=>({pic:r[0],txt:r[1]})),vv=n=>((v+n-1)%3)+1;
  P(L.cover(d,c,v));
  switch(cat){
-  case 'explain':if(c.hook)P(L.hook(d,c,v));if(goals.length)P(L.goals(d,goals,v));R('points').forEach((p,i)=>P(L.concept(d,p,vv(i))));if(ex.length)P(L.cards(d,ex,'أمثلة'));R('questions').forEach(q=>P(L.mcq(d,q)));if(R('summary').length)P(L.list(d,'تذكّروا',R('summary').map(r=>r[0]),'check'));break;
+  case 'explain':fullLesson(d,c,v,P,R,goals,ex,vv,false);break;
   case 'intro':if(c.hook)P(L.hook(d,c,v));R('cards').forEach(f=>P(L.flip(d,f)));if(goals.length)P(L.goals(d,goals,vv(1),'ماذا سنتعلّم؟'));break;
   case 'goals':if(goals.length)P(L.goals(d,goals,v));if(goals.length)P(L.goals(d,goals,vv(1)));if(R('steps').length)P(L.steps(d,'خطة الدرس',R('steps').map(r=>r[0])));break;
   case 'concepts':R('points').forEach((p,i)=>P(L.concept(d,p,vv(i))));R('cards').forEach(f=>P(L.flip(d,f)));if(R('summary').length)P(L.list(d,'الخلاصة',R('summary').map(r=>r[0]),'bulb'));break;
   case 'review':R('questions').forEach(q=>P(L.mcq(d,q)));R('tf').forEach(t=>P(L.tf(d,t)));R('order').forEach(o=>P(L.order(d,o)));break;
-  case 'assess':R('questions').forEach(q=>P(L.mcq(d,q)));R('tf').forEach(t=>P(L.tf(d,t)));R('order').forEach(o=>P(L.order(d,o)));R('count').forEach(n=>P(L.count(d,n)));P(L.scale(d));break;
-  case 'tasks':if(R('tasks').length)P(L.tasks(d,R('tasks').map(r=>r[0]),c.note));if(R('steps').length)P(L.steps(d,'طريقة التنفيذ',R('steps').map(r=>r[0])));break;
+  case 'assess':{const Q=R('questions'),qb=Q.filter(q=>!LVK(q[5])),lv=Q.filter(q=>LVK(q[5])).sort((a,b)=>LVK(a[5]).localeCompare(LVK(b[5])));qb.forEach(q=>P(L.mcq(d,q)));lv.forEach(q=>P(L.mcq(d,q,'تقويم متمايز · '+q[5])));R('tf').forEach(t=>P(L.tf(d,t)));R('order').forEach(o=>P(L.order(d,o)));R('count').forEach(n=>P(L.count(d,n)));P(c.exit?L.exit(d,c.exit):L.scale(d));break}
+  case 'tasks':if(R('tasks').length)P(L.tasks(d,R('tasks').map(r=>r[0]),c.note));if(R('hw',1).length)P(L.levels(d,'واجب متمايز',R('hw',1).map(r=>({lv:r[0],t:r[1]})),'اختاروا واجبكم'));if(R('steps').length)P(L.steps(d,'طريقة التنفيذ',R('steps').map(r=>r[0])));break;
   case 'story':{const pg=R('story');pg.forEach((p,i)=>P(L.story(d,p,i,pg.length)));R('questions').forEach(q=>P(L.mcq(d,q)));if(c.moral)P(L.concept(d,['العبرة',c.moral,'💡'],2));break}
   case 'lab':if(c.hook)P(L.hook(d,c,1));{const tl=R('tools').map(r=>({pic:r[0],txt:r[1]}));if(tl.length)P(L.cards(d,tl,'الأدوات'))}if(R('steps').length)P(L.steps(d,'خطوات التجربة',R('steps').map(r=>r[0])));R('tf').forEach(t=>P(L.tf(d,t)));if(c.result)P(L.concept(d,['ماذا اكتشفنا؟',c.result,'🔬'],v));break;
   case 'exam':if(R('summary').length)P(L.list(d,'ملخص المراجعة',R('summary').map(r=>r[0]),'check'));R('questions').forEach(q=>P(L.mcq(d,q)));R('tf').forEach(t=>P(L.tf(d,t)));if(R('tips').length)P(L.list(d,'نصائح للاختبار',R('tips').map(r=>r[0]),'bulb','بالتوفيق!'));break;
-  case 'lesson':if(c.hook)P(L.hook(d,c,1));if(goals.length)P(L.goals(d,goals,v));R('points').forEach((p,i)=>P(L.concept(d,p,vv(i))));if(ex.length)P(L.cards(d,ex,'أمثلة'));R('cards').forEach(f=>P(L.flip(d,f)));R('order').forEach(o=>P(L.order(d,o)));R('count').forEach(n=>P(L.count(d,n)));R('questions').forEach(q=>P(L.mcq(d,q)));R('tf').forEach(t=>P(L.tf(d,t)));P(L.scale(d));break;
+  case 'lesson':fullLesson(d,c,v,P,R,goals,ex,vv,true);break;
  }
  if(c.game&&(cat==='lesson'||CAT_FIELDS[cat].includes('game')))P(L.game(d,c.game));
  P(L.reward(d));return out}
@@ -135,8 +171,8 @@ function compose(cat,c,d,v=1){d=DESIGNS[d]?d:'adv';const out=[],P=s=>out.push(s)
 let PL=null;
 function openPlayer(slides,title,o={}){if(!slides||!slides.length)return toast('لا توجد شرائح للعرض');PL={slides,title,i:Math.max(0,Math.min(o.start|0,slides.length-1)),done:new Set(),d3:store3d()};
  const el=document.createElement('div');el.className='pl';el.id='pl';
- el.innerHTML=`<div class="plTop"><button class="ib" data-a="close" aria-label="إغلاق العرض">${ic('x')}</button><div class="plTitle">${esc(title||'')}</div><span class="plProg" id="plProg" aria-hidden="true"></span><button class="ib d3b" data-a="d3" aria-pressed="${!!PL.d3}" aria-label="العرض ثلاثي الأبعاد">${ic('box')}</button><button class="ib" data-a="kid" aria-label="نجمة لطالب">${ic('star')}</button><button class="ib" data-a="wheel" aria-label="عجلة الأسماء">${ic('disc-3')}</button><button class="ib" data-a="mute" aria-label="الصوت">${ic(SND.muted?'volume-x':'volume-2')}</button></div><div class="plMain" data-tilt><div class="stage ${PL.d3?'d3':''}" id="stage"></div></div><div class="plBot"><button class="btn sec" data-a="prev">${ic('arrow-right')}<span>السابق</span></button><div class="teams" id="teams"></div><button class="btn pri" data-a="next"><span>التالي</span>${ic('arrow-left')}</button></div>`;
- document.body.appendChild(el);document.body.style.overflow='hidden';el.addEventListener('click',plClick);
+ el.innerHTML=`<div class="plTop"><button class="ib" data-a="close" aria-label="إغلاق العرض">${ic('x')}</button><div class="plTitle">${esc(title||'')}</div><span class="plProg" id="plProg" aria-hidden="true"></span><button class="ib d3b" data-a="d3" aria-pressed="${!!PL.d3}" aria-label="العرض ثلاثي الأبعاد">${ic('box')}</button><button class="ib" data-a="notes" aria-pressed="false" aria-label="ملاحظات المعلمة" title="ملاحظات المعلمة">${ic('notebook-pen')}</button><button class="ib" data-a="kid" aria-label="نجمة لطالب">${ic('star')}</button><button class="ib" data-a="wheel" aria-label="عجلة الأسماء">${ic('disc-3')}</button><button class="ib" data-a="mute" aria-label="الصوت">${ic(SND.muted?'volume-x':'volume-2')}</button></div><div class="plMain" data-tilt><div class="stage ${PL.d3?'d3':''}" id="stage"></div></div><div class="plBot"><button class="btn sec" data-a="prev">${ic('arrow-right')}<span>السابق</span></button><div class="teams" id="teams"></div><button class="btn pri" data-a="next"><span>التالي</span>${ic('arrow-left')}</button></div>`;
+ el.insertAdjacentHTML('beforeend','<aside class="plNotes" id="plNotes" hidden><b>ملاحظات المعلمة</b><p id="plNotesT"></p></aside>');document.body.appendChild(el);document.body.style.overflow='hidden';el.addEventListener('click',plClick);
  try{const r=el.requestFullscreen&&el.requestFullscreen();r&&r.catch&&r.catch(()=>{})}catch(e){}
  renderPl();icons();sway()}
 function closePl(){const el=$('#pl');if(el)el.remove();document.body.style.overflow='';try{if(document.fullscreenElement)document.exitFullscreen().catch(()=>{})}catch(e){}PL=null;if(typeof MOT!=="undefined")MOT.flush()}
@@ -146,7 +182,7 @@ function renderPl(dir){const s=PL.slides[PL.i],pl=$('#pl'),st=$('#stage');st.cla
  const html=slideHTML(s,{mode:'play',done:PL.done,d3:PL.d3,cls:PL.d3&&dir?(dir>0?'in-n':'in-p'):''});
  if(PL.d3&&dir&&!reduced()){$$('.sl.gone',st).forEach(x=>x.remove());const old=$('.sl',st);if(old){old.classList.add('gone',dir>0?'out-n':'out-p');setTimeout(()=>old.remove(),650)}st.insertAdjacentHTML('beforeend',html)}else st.innerHTML=html;
  $('#plProg').innerHTML=PL.slides.map((_,k)=>`<i class="${k===PL.i?'on':''}"></i>`).join('');
- $('[data-a=prev]',pl).disabled=PL.i===0;$('[data-a=next]',pl).disabled=PL.i===PL.slides.length-1;renderTeams();icons();
+ {const nt=$('#plNotesT');if(nt)nt.textContent=s.n||'لا توجد ملاحظات لهذه الشريحة.'}clearInterval(PL.tm);$('[data-a=prev]',pl).disabled=PL.i===0;$('[data-a=next]',pl).disabled=PL.i===PL.slides.length-1;renderTeams();icons();
  if((s.els||[]).some(e=>e.kind==='podium')&&!PL.done.has('end'+PL.i)){PL.done.add('end'+PL.i);setTimeout(()=>{confetti(220);sfx('end')},300)}}
 function popAward(i){const tg=$$('#teams .tg')[i];if(!tg)return;const p=document.createElement('span');p.className='pop';p.textContent='+١ '+(DESIGNS[PL.slides[PL.i].d]||DESIGNS.adv).reward;tg.appendChild(p);setTimeout(()=>p.remove(),1200)}
 function plWin(){confetti(130);sfx('win');const i=MOT.active;MOT.awardTeam(i,1,'إجابة صحيحة');MOT.active=(i+1)%MOT.teams().length;renderTeams();popAward(i)}
@@ -160,6 +196,10 @@ function plClick(e){const t=e.target.closest('button');if(!t||t.closest('.sl.gon
  if(a==='mute'){SND.muted=!SND.muted;t.innerHTML=ic(SND.muted?'volume-x':'volume-2');icons();return}
  if(a==='wheel')return openDialog(`<h2 class="dh">عجلة الأسماء</h2>${wheelBox()}`,{onMount:d=>mountWheel($('.wheel',d)),focus:false});
  if(a==='kid')return MOT.quickStar();
+ if(a==='notes'){const n=$('#plNotes'),on=n.hidden;n.hidden=!on;t.setAttribute('aria-pressed',on);return}
+ if(t.dataset.timer){const box=t.closest('.tmr'),sec=+box.dataset.sec,v=$('.tmv',box),c=$('.tmc',box);const paint=l=>{v.textContent=`${ar(Math.floor(l/60))}:${ar(String(l%60).padStart(2,'0'))}`;c.style.setProperty('--p',l/sec)};clearInterval(PL.tm);
+  if(t.dataset.timer==='reset'){box._l=sec;paint(sec);box.classList.remove('end');$('[data-timer=go]',box).textContent='ابدؤوا';return}
+  if(box._run){box._run=0;t.textContent='تابعوا';return}let l=box._l??sec;box._run=1;t.textContent='إيقاف مؤقت';PL.tm=setInterval(()=>{if(!box.isConnected||!box._run){clearInterval(PL.tm);return}l--;box._l=l;paint(Math.max(0,l));if(l<=5&&l>0)sfx('tick');if(l<=0){clearInterval(PL.tm);box._run=0;box.classList.add('end');sfx('end');toast('انتهى وقت النشاط');t.textContent='ابدؤوا'}},1000);return}
  if(a==='cert'){const w=MOT.teams().slice().sort((x,y)=>y.s-x.s)[0];return openDialog(`<h2 class="dh">شهادة الفريق الفائز</h2>${certHTML('فريق '+(w?w.n:''),'لتميّزه وحماسه في درس «'+(PL.title||'')+'»',PL.slides[PL.i].d)}`,{wide:1,focus:false})}
  if(t.dataset.speak)return speak(t.dataset.speak);
  if(t.dataset.game)return openGameById(t.dataset.game);
