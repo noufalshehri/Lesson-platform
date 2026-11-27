@@ -155,18 +155,18 @@ const DESIGNS={
  adv:{name:'جزر المغامرة',c:'#0284c7',c2:'#e0f2fe',c3:'#7dd3fc',m:'adv',reward:'💎'},
  bld:{name:'مدينة البنّائين',c:'#ea580c',c2:'#ffedd5',c3:'#fdba74',m:'bld',reward:'🏠'},
  gdn:{name:'الحديقة المسحورة',c:'#db2777',c2:'#fce7f3',c3:'#f9a8d4',m:'gdn',reward:'🌸'},
- space:{name:'رحلة الفضاء',c:'#7c3aed',c2:'#ede9fe',c3:'#c4b5fd',m:'sci',reward:'🚀'},
- sea:{name:'أعماق البحر',c:'#0891b2',c2:'#cffafe',c3:'#67e8f9',m:'sci',reward:'🐚'},
+ space:{name:'رحلة الفضاء',c:'#7c3aed',c2:'#ede9fe',c3:'#c4b5fd',m:'spc',reward:'🚀'},
+ sea:{name:'أعماق البحر',c:'#0891b2',c2:'#cffafe',c3:'#67e8f9',m:'sub',reward:'🐚'},
  chalk:{name:'السبورة',c:'#ca8a04',c2:'#fef9c3',c3:'#fde047',m:'star',reward:'⭐'},
- note:{name:'دفتري',c:'#2563eb',c2:'#dbeafe',c3:'#93c5fd',m:'gdn',reward:'✏️'},
- jgl:{name:'الغابة الخضراء',c:'#15803d',c2:'#dcfce7',c3:'#86efac',m:'gdn',reward:'🍃'},
- dsr:{name:'رمال الصحراء',c:'#b45309',c2:'#fef3c7',c3:'#fcd34d',m:'adv',reward:'⭐'},
- tre:{name:'جزيرة الكنز',c:'#0f766e',c2:'#ccfbf1',c3:'#5eead4',m:'adv',reward:'🪙'},
- calm:{name:'هادئ وبسيط',c:'#475569',c2:'#f1f5f9',c3:'#cbd5e1',m:'star',reward:'⭐'}
+ note:{name:'دفتري',c:'#2563eb',c2:'#dbeafe',c3:'#93c5fd',m:'pen',reward:'✏️'},
+ jgl:{name:'الغابة الخضراء',c:'#15803d',c2:'#dcfce7',c3:'#86efac',m:'tree',reward:'🍃'},
+ dsr:{name:'رمال الصحراء',c:'#b45309',c2:'#fef3c7',c3:'#fcd34d',m:'lan',reward:'⭐'},
+ tre:{name:'جزيرة الكنز',c:'#0f766e',c2:'#ccfbf1',c3:'#5eead4',m:'chest',reward:'🪙'},
+ calm:{name:'هادئ وبسيط',c:'#475569',c2:'#f1f5f9',c3:'#cbd5e1',m:'book',reward:'⭐'}
 };
 const DK7=['adv','bld','gdn','space','sea','chalk','note'];
 const DK=Object.keys(DESIGNS);
-const MASCOTS={adv:'منطاد المغامرة',bld:'مكعّبات الأرقام',gdn:'أصيص الحروف',sci:'مختبر العلوم',star:'نجمة الإنجاز'};
+const MASCOTS={adv:'منطاد المغامرة',bld:'مكعّبات الأرقام',gdn:'أصيص الحروف',sci:'مختبر العلوم',spc:'صاروخ الفضاء',sub:'غوّاصة البحر',pen:'علبة الأقلام',tree:'شجرة الغابة',lan:'فانوس الصحراء',chest:'صندوق الكنز',book:'كتاب القراءة',star:'نجمة الإنجاز'};
 const SHADOW=`<ellipse cx="100" cy="246" rx="54" ry="8" fill="#0f172a" opacity=".14"/>`;
 const COMP={
  adv:()=>`<defs><radialGradient id="cpA" cx=".35" cy=".3" r=".85"><stop offset="0" stop-color="#7dd3fc"/><stop offset="1" stop-color="#0369a1"/></radialGradient><linearGradient id="cpAb" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#d97706"/><stop offset="1" stop-color="#92400e"/></linearGradient></defs>${SHADOW}
@@ -195,6 +195,41 @@ const COMP={
   <path d="M138 120 H162 V214 Q162 234 150 234 Q138 234 138 214Z" fill="#f0fdf4" stroke="#94a3b8" stroke-width="4"/><path d="M141 178 H159 V214 Q159 230 150 230 Q141 230 141 214Z" fill="url(#cpS2)"/><rect x="132" y="112" width="36" height="10" rx="4" fill="#64748b"/>
   <g transform="translate(150 70)"><circle r="22" fill="none" stroke="#f59e0b" stroke-width="7"/><circle r="16" fill="#e0f2fe" opacity=".8"/><path d="M15 15 L34 34" stroke="#78350f" stroke-width="9" stroke-linecap="round"/><path d="M-8 -8 q4 -5 10 -4" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/></g>
   ${spark(30,40,7,'#fde047')}${spark(108,30,5,'#7dd3fc')}`,
+ spc:()=>`<defs><linearGradient id="cpR" x1="0" x2="1"><stop offset="0" stop-color="#f8fafc"/><stop offset="1" stop-color="#cbd5e1"/></linearGradient></defs>${SHADOW}
+  <path d="M100 236 Q86 214 92 196 H108 Q114 214 100 236Z" fill="#f97316"/><path d="M100 226 Q93 212 96 198 H104 Q107 212 100 226Z" fill="#fde047"/>
+  <path d="M70 160 L48 196 L76 188Z" fill="#ef4444"/><path d="M130 160 L152 196 L124 188Z" fill="#ef4444"/>
+  <path d="M100 20 C134 50 140 110 130 196 H70 C60 110 66 50 100 20Z" fill="url(#cpR)" stroke="#94a3b8" stroke-width="3"/>
+  <path d="M100 20 C116 34 124 52 127 70 H73 C76 52 84 34 100 20Z" fill="#ef4444"/>
+  <circle cx="100" cy="112" r="20" fill="#38bdf8" stroke="#475569" stroke-width="6"/><circle cx="93" cy="105" r="6" fill="#fff" opacity=".6"/>
+  <rect x="92" y="150" width="16" height="40" rx="8" fill="#ef4444"/>
+  ${spark(30,40,7,'#fde047')}${spark(170,60,5,'#c4b5fd')}${spark(160,170,4,'#fde047')}${spark(36,150,4,'#c4b5fd')}`,
+ sub:()=>`<defs><linearGradient id="cpU" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#fde047"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs>${SHADOW}
+  <ellipse cx="100" cy="160" rx="82" ry="50" fill="url(#cpU)"/><rect x="78" y="88" width="52" height="40" rx="12" fill="#f59e0b"/><path d="M116 88 V64 H140" stroke="#64748b" stroke-width="7" fill="none" stroke-linecap="round"/><rect x="136" y="56" width="16" height="14" rx="4" fill="#64748b"/>
+  ${[60,100,140].map(x=>`<circle cx="${x}" cy="158" r="15" fill="#67e8f9" stroke="#b45309" stroke-width="5"/><circle cx="${x-5}" cy="153" r="4" fill="#fff" opacity=".7"/>`).join('')}
+  <path d="M18 160 L2 140 V180Z" fill="#f59e0b"/><circle cx="18" cy="160" r="6" fill="#b45309"/>
+  <g fill="none" stroke="#67e8f9" stroke-width="3" opacity=".9"><circle cx="160" cy="80" r="8"/><circle cx="174" cy="56" r="5"/><circle cx="160" cy="36" r="3.5"/></g>`,
+ pen:()=>`${SHADOW}
+  ${[['#ef4444',-14,70],['#22c55e',0,52],['#3b82f6',14,64],['#facc15',-4,40]].map(([c,r,h])=>`<g transform="rotate(${r} 100 150)"><rect x="92" y="${150-h-40}" width="16" height="${h+40}" fill="${c}"/><path d="M92 ${150-h-40} L100 ${150-h-62} L108 ${150-h-40}Z" fill="#fde68a"/><path d="M97 ${150-h-54} L100 ${150-h-62} L103 ${150-h-54}Z" fill="#334155"/></g>`).join('')}
+  <path d="M56 140 H144 L134 236 Q100 244 66 236Z" fill="#2563eb"/><rect x="50" y="132" width="100" height="16" rx="6" fill="#1d4ed8"/><path d="M70 176 H130 M72 200 H128" stroke="#93c5fd" stroke-width="4" stroke-linecap="round"/>
+  ${spark(36,50,6,'#fde047')}${spark(166,70,5,'#93c5fd')}`,
+ tree:()=>`${SHADOW}<path d="M92 244 Q96 190 94 150 H106 Q104 190 108 244Z" fill="#92400e"/><path d="M100 196 L76 176 M100 180 L124 162" stroke="#92400e" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="100" cy="92" r="60" fill="#16a34a"/><circle cx="58" cy="126" r="34" fill="#22c55e"/><circle cx="142" cy="124" r="36" fill="#22c55e"/><circle cx="100" cy="62" r="34" fill="#4ade80"/>
+  <circle cx="82" cy="54" r="10" fill="#fff" opacity=".25"/>${[[70,100],[128,88],[106,128],[56,138],[146,140]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="7" fill="#ef4444"/><circle cx="${x-2}" cy="${y-2}" r="2" fill="#fff" opacity=".6"/>`).join('')}
+  <path d="M28 236 Q40 222 52 236 M150 238 Q160 226 172 238" stroke="#65a30d" stroke-width="5" fill="none" stroke-linecap="round"/>`,
+ lan:()=>`<defs><radialGradient id="cpL" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fef9c3"/><stop offset="1" stop-color="#fbbf24"/></radialGradient></defs>${SHADOW}
+  <circle cx="100" cy="150" r="80" fill="#fde68a" opacity=".35"/><path d="M84 40 Q100 14 116 40" stroke="#b45309" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M70 60 H130 L120 44 H80Z" fill="#b45309"/><path d="M66 64 H134 L144 200 H56Z" fill="url(#cpL)" stroke="#b45309" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M100 64 V200 M78 64 L70 200 M122 64 L130 200" stroke="#b45309" stroke-width="4"/>
+  <path d="M100 168 Q86 148 100 124 Q114 148 100 168Z" fill="#f97316"/><path d="M100 162 Q94 150 100 138 Q106 150 100 162Z" fill="#fef08a"/>
+  <path d="M50 200 H150 L140 220 H60Z" fill="#92400e"/>${spark(36,80,6,'#f59e0b')}${spark(168,96,5,'#f59e0b')}`,
+ chest:()=>`${SHADOW}<path d="M40 130 H160 V230 Q100 240 40 230Z" fill="#a16207"/><path d="M40 130 Q100 60 160 130Z" fill="#ca8a04"/>
+  <rect x="40" y="140" width="120" height="12" fill="#facc15"/><rect x="40" y="196" width="120" height="10" fill="#facc15"/><rect x="88" y="140" width="24" height="34" rx="4" fill="#fde047" stroke="#a16207" stroke-width="3"/><circle cx="100" cy="156" r="4" fill="#a16207"/>
+  ${[[70,108],[96,96],[124,104],[110,86]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="11" fill="#facc15" stroke="#ca8a04" stroke-width="3"/>`).join('')}<path d="M80 80 L88 64 L96 80Z" fill="#38bdf8"/>
+  ${spark(40,70,7,'#fde047')}${spark(166,60,6,'#fde047')}${spark(170,150,4,'#fde047')}`,
+ book:()=>`${SHADOW}<path d="M100 96 Q60 74 24 86 V216 Q60 204 100 226Z" fill="#e2e8f0"/><path d="M100 96 Q140 74 176 86 V216 Q140 204 100 226Z" fill="#f8fafc"/>
+  <path d="M100 96 V226" stroke="#94a3b8" stroke-width="3"/><path d="M24 86 V216 Q60 204 100 226 Q140 204 176 216 V86" fill="none" stroke="#475569" stroke-width="5" stroke-linejoin="round"/>
+  ${[120,140,160,180].map(y=>`<path d="M40 ${y} Q66 ${y-8} 88 ${y+4} M112 ${y+4} Q134 ${y-8} 160 ${y}" stroke="#cbd5e1" stroke-width="4" fill="none" stroke-linecap="round"/>`).join('')}
+  <path d="M140 74 V120 L148 112 L156 120 V70Z" fill="#ef4444"/>${spark(40,50,6,'#fde047')}${spark(164,40,5,'#93c5fd')}`,
  star:()=>`<defs><radialGradient id="msf" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#fff7c2"/><stop offset=".55" stop-color="#fde047"/><stop offset="1" stop-color="#f59e0b"/></radialGradient></defs>${SHADOW}
   <path d="M74 176 L58 238 L80 226 L92 246 L104 186Z" fill="#ef4444"/><path d="M126 176 L142 238 L120 226 L108 246 L96 186Z" fill="#3b82f6"/>
   <path d="${starPath(100,110,90,.52)}" fill="url(#msf)" stroke="#f59e0b" stroke-width="8" stroke-linejoin="round"/>
