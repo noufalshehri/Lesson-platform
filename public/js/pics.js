@@ -21,3 +21,6 @@ const PICS=(()=>{const m={
 };return m})();
 /* returns an illustration path for a single known emoji, or '' */
 function picSrc(v){if(!v)return '';const k=String(v).trim();const n=PICS[k]||PICS[k.replace(/️/g,'')];return n?'img/p/'+n+'.webp':''}
+
+/* small inline illustration for a reward emoji (falls back to the emoji) */
+function rwHTML(e){const p=picSrc(e);return p?`<img class="rwi" src="${p}" alt="">`:esc(e||'')}

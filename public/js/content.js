@@ -13,7 +13,7 @@ const TPL_SAMPLES={
  exam:{title:'مراجعة الفصل الدراسي',sub:'لغتي',summary:[['الحروف الهجائية وأشكالها'],['الكلمات والجمل البسيطة'],['التهجئة والقراءة']],questions:[['ما الحرف الأول في كلمة «قمر»؟','🌙','ق','م','ر'],['أي كلمة تبدأ بحرف السين؟','🐟','سمكة','بطة','تفاحة']],tf:[['كلمة «بيت» تبدأ بحرف الباء','🏠','صح']],tips:[['نم مبكرًا قبل الاختبار'],['اقرأ السؤال بهدوء'],['راجع إجاباتك قبل التسليم']],game:'g-speed'}
 };
 const STYLE_NAMES=['كلاسيكي','شريط ملوّن','مجلة'];
-const TEMPLATES=CATS.flatMap((c,i)=>[0,1,2].map(k=>{const d=DK[(i+k*2)%DK.length];return{id:`t-${c.id}-${k+1}`,cat:c.id,d,v:k+1,name:`${c.name} · ${DESIGNS[d].name}`,style:STYLE_NAMES[k],content:TPL_SAMPLES[c.id]}}));
+const TEMPLATES=CATS.flatMap((c,i)=>[0,1,2,3].map(k=>{const d=k<3?DK7[(i+k*2)%DK7.length]:['jgl','dsr','tre','calm'][i%4];return{id:`t-${c.id}-${k+1}`,cat:c.id,d,v:k<3?k+1:1,name:`${c.name} · ${DESIGNS[d].name}`,style:STYLE_NAMES[k%3],content:TPL_SAMPLES[c.id]}}));
 
 const KG='رياض الأطفال';
 const LESSONS=[

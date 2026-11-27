@@ -81,6 +81,39 @@ function sceneMore(w){
   <g fill="#fff" opacity=".05"><ellipse cx="70" cy="50" rx="60" ry="18"/><ellipse cx="240" cy="124" rx="70" ry="16"/></g>
   <g stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".55"><circle cx="34" cy="32" r="8"/><path d="M34 18 V14 M34 46 V50 M20 32 H16 M48 32 H52 M24 22 L21 19 M44 42 L47 45 M44 22 L47 19 M24 42 L21 45"/><path d="M280 30 h10 M285 25 v10 M298 30 h8 M270 46 h10 M270 50 h10"/><path d="M292 150 c-12 -8 -14 -16 -8 -20 c4 -3 8 0 8 3 c0 -3 4 -6 8 -3 c6 4 4 12 -8 20Z"/><path d="M22 140 l8 -10 l8 10 v10 h-16Z M28 150 v-5 h4 v5"/><path d="M120 22 q10 -8 20 0 t20 0 t20 0"/></g>
   <rect y="165" width="320" height="15" fill="#78350f"/><rect y="165" width="320" height="3" fill="#a16207"/><rect x="40" y="168" width="16" height="4" rx="2" fill="#fff"/><rect x="62" y="168" width="14" height="4" rx="2" fill="#f9a8d4"/><rect x="82" y="168" width="12" height="4" rx="2" fill="#fde047"/><rect x="250" y="167" width="26" height="7" rx="1.5" fill="#1e3a8a"/><rect x="250" y="171" width="26" height="3" fill="#e5e7eb"/>`;
+ }else if(w==='jgl'){
+  const tree=(x,h,c,c2)=>`<path d="M${x} 180 V${180-h*.5}" stroke="#78350f" stroke-width="${h*.08}" stroke-linecap="round"/><circle cx="${x}" cy="${180-h*.62}" r="${h*.3}" fill="${c}"/><circle cx="${x-h*.18}" cy="${180-h*.5}" r="${h*.22}" fill="${c2}"/><circle cx="${x+h*.18}" cy="${180-h*.52}" r="${h*.22}" fill="${c2}"/><circle cx="${x-h*.08}" cy="${180-h*.72}" r="${h*.1}" fill="#fff" opacity=".18"/>`;
+  const leaf=(x,y,r,c)=>`<path d="M0 0 Q12 -10 24 0 Q12 10 0 0Z M2 0 H22" fill="${c}" stroke="#14532d" stroke-width=".6" transform="translate(${x} ${y}) rotate(${r})"/>`;
+  g=`<defs><linearGradient id="j-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bbf7d0"/><stop offset="1" stop-color="#f0fdf4"/></linearGradient><radialGradient id="j-sun" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fef9c3"/><stop offset="1" stop-color="#fef9c3" stop-opacity="0"/></radialGradient></defs>
+  <rect width="320" height="180" fill="url(#j-sky)"/><circle cx="160" cy="10" r="90" fill="url(#j-sun)"/>
+  <g opacity=".14" fill="#fef9c3"><path d="M150 0 L170 0 L210 180 L140 180Z"/><path d="M60 0 L74 0 L110 180 L70 180Z"/></g>
+  ${tree(20,120,'#16a34a','#22c55e')}${tree(300,130,'#15803d','#16a34a')}${tree(60,80,'#4ade80','#22c55e')}${tree(262,86,'#4ade80','#16a34a')}
+  <path d="M0 160 Q80 148 160 158 Q240 168 320 152 V180 H0Z" fill="#65a30d"/><path d="M0 170 Q120 160 220 172 Q280 176 320 168 V180 H0Z" fill="#4d7c0f"/>
+  <g fill="#facc15"><circle cx="110" cy="166" r="2.4"/><circle cx="196" cy="170" r="2.4"/></g><g fill="#f472b6"><circle cx="140" cy="172" r="2.2"/><circle cx="232" cy="164" r="2.2"/></g>
+  <path d="M0 0 Q20 30 8 60 M24 0 Q34 24 30 46 M320 0 Q296 34 308 66" stroke="#15803d" stroke-width="3" fill="none" stroke-linecap="round"/>
+  ${leaf(2,58,60,'#22c55e')}${leaf(22,40,40,'#4ade80')}${leaf(300,62,120,'#22c55e')}${leaf(130,20,-20,'#86efac')}${leaf(196,30,200,'#86efac')}`;
+ }else if(w==='dsr'){
+  const palm=(x,y,s)=>`<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 0 Q4 -30 -2 -60" stroke="#92400e" stroke-width="5" fill="none" stroke-linecap="round"/>${[[-30,-52],[-24,-70],[0,-78],[24,-70],[30,-52]].map(([a,b])=>`<path d="M-2 -60 Q${a/2} ${b-6} ${a} ${b}" stroke="#16a34a" stroke-width="6" fill="none" stroke-linecap="round"/>`).join('')}<g fill="#b45309"><circle cx="-4" cy="-56" r="3"/><circle cx="2" cy="-55" r="3"/></g></g>`;
+  g=`<defs><linearGradient id="d-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fde68a"/><stop offset=".7" stop-color="#fef3c7"/><stop offset="1" stop-color="#fffbeb"/></linearGradient><linearGradient id="d-d1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbbf24"/><stop offset="1" stop-color="#d97706"/></linearGradient><linearGradient id="d-d2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fcd34d"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs>
+  <rect width="320" height="180" fill="url(#d-sky)"/><circle cx="262" cy="40" r="22" fill="#fb923c" opacity=".85"/><circle cx="262" cy="40" r="32" fill="#fdba74" opacity=".25"/>
+  <path d="M0 120 Q60 96 130 118 Q200 138 260 110 Q300 96 320 104 V180 H0Z" fill="url(#d-d1)" opacity=".7"/>
+  <path d="M0 146 Q80 124 160 144 Q240 162 320 136 V180 H0Z" fill="url(#d-d2)"/><path d="M40 156 q20 -6 40 0 M200 162 q24 -6 48 0" stroke="#d97706" stroke-width="1.4" fill="none" opacity=".6"/>
+  ${palm(34,150,1)}${palm(290,146,.8)}<g transform="translate(160 132)"><path d="M-30 0 L0 -26 L30 0Z" fill="#fef3c7" stroke="#b45309" stroke-width="2"/><path d="M-6 0 V-12 H6 V0" fill="#b45309"/><path d="M-30 0 H30" stroke="#b45309" stroke-width="2"/></g>
+  <g fill="#fff" opacity=".7"><circle cx="60" cy="30" r="1.6"/><circle cx="110" cy="18" r="1.2"/><circle cx="190" cy="26" r="1.4"/></g>${spark(80,44,3,'#f59e0b')}${spark(210,58,2.4,'#f59e0b')}`;
+ }else if(w==='tre'){
+  g=`<defs><linearGradient id="t-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7dd3fc"/><stop offset="1" stop-color="#e0f2fe"/></linearGradient><linearGradient id="t-sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2dd4bf"/><stop offset="1" stop-color="#0f766e"/></linearGradient></defs>
+  <rect width="320" height="180" fill="url(#t-sky)"/><g fill="#fff"><ellipse cx="60" cy="32" rx="26" ry="9"/><ellipse cx="76" cy="26" rx="16" ry="9"/><ellipse cx="248" cy="24" rx="22" ry="7"/></g>
+  <rect y="110" width="320" height="70" fill="url(#t-sea)"/><path d="M0 116 q10 -4 20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0" stroke="#ccfbf1" stroke-width="1.6" fill="none" opacity=".8"/>
+  <path d="M190 128 Q250 92 310 126 Z" fill="#fde68a"/><path d="M196 128 Q250 100 304 126" stroke="#fbbf24" stroke-width="2" fill="none"/>
+  <path d="M262 112 Q266 84 258 64" stroke="#92400e" stroke-width="4" fill="none" stroke-linecap="round"/>${[[-26,-6],[-18,-22],[4,-26],[22,-14],[26,2]].map(([a,b])=>`<path d="M258 64 Q${258+a/2} ${64+b-6} ${258+a} ${64+b}" stroke="#16a34a" stroke-width="5" fill="none" stroke-linecap="round"/>`).join('')}
+  <path d="M224 118 l6 -6 M224 112 l6 6" stroke="#dc2626" stroke-width="2.4" stroke-linecap="round"/>
+  <g transform="translate(244 112)"><rect x="-10" y="-8" width="20" height="12" rx="2" fill="#b45309"/><path d="M-10 -8 Q0 -16 10 -8Z" fill="#d97706"/><rect x="-2" y="-6" width="4" height="5" fill="#fde047"/></g>
+  <g transform="translate(70 124)"><path d="M-28 0 H28 L20 12 H-20Z" fill="#92400e"/><path d="M0 0 V-40" stroke="#78350f" stroke-width="2.4"/><path d="M2 -38 L26 -16 H2Z" fill="#fff7ed"/><path d="M-2 -36 L-20 -16 H-2Z" fill="#fef3c7"/></g>
+  <path d="M30 160 q8 -4 16 0 M140 166 q10 -4 20 0" stroke="#99f6e4" stroke-width="1.4" fill="none"/>${spark(150,40,3,'#fde047')}`;
+ }else if(w==='calm'){
+  g=`<rect width="320" height="180" fill="#f8fafc"/><circle cx="300" cy="10" r="70" fill="#e2e8f0" opacity=".7"/><circle cx="10" cy="176" r="56" fill="#e0f2fe" opacity=".8"/>
+  <circle cx="40" cy="30" r="5" fill="#cbd5e1"/><circle cx="56" cy="30" r="5" fill="#fde68a"/><circle cx="72" cy="30" r="5" fill="#fecaca"/>
+  <path d="M220 160 H300" stroke="#cbd5e1" stroke-width="3" stroke-linecap="round"/><path d="M236 168 H300" stroke="#e2e8f0" stroke-width="3" stroke-linecap="round"/>`;
  }else{
   let L='';for(let y=24;y<180;y+=10)L+=`<path d="M0 ${y} H320" stroke="#bfdbfe" stroke-width=".7"/>`;
   g=`<rect width="320" height="180" fill="#fffdf5"/>${L}<path d="M292 0 V180" stroke="#fca5a5" stroke-width="1.1"/>
@@ -125,8 +158,13 @@ const DESIGNS={
  space:{name:'رحلة الفضاء',c:'#7c3aed',c2:'#ede9fe',c3:'#c4b5fd',m:'sci',reward:'🚀'},
  sea:{name:'أعماق البحر',c:'#0891b2',c2:'#cffafe',c3:'#67e8f9',m:'sci',reward:'🐚'},
  chalk:{name:'السبورة',c:'#ca8a04',c2:'#fef9c3',c3:'#fde047',m:'star',reward:'⭐'},
- note:{name:'دفتري',c:'#2563eb',c2:'#dbeafe',c3:'#93c5fd',m:'gdn',reward:'✏️'}
+ note:{name:'دفتري',c:'#2563eb',c2:'#dbeafe',c3:'#93c5fd',m:'gdn',reward:'✏️'},
+ jgl:{name:'الغابة الخضراء',c:'#15803d',c2:'#dcfce7',c3:'#86efac',m:'gdn',reward:'🍃'},
+ dsr:{name:'رمال الصحراء',c:'#b45309',c2:'#fef3c7',c3:'#fcd34d',m:'adv',reward:'⭐'},
+ tre:{name:'جزيرة الكنز',c:'#0f766e',c2:'#ccfbf1',c3:'#5eead4',m:'adv',reward:'🪙'},
+ calm:{name:'هادئ وبسيط',c:'#475569',c2:'#f1f5f9',c3:'#cbd5e1',m:'star',reward:'⭐'}
 };
+const DK7=['adv','bld','gdn','space','sea','chalk','note'];
 const DK=Object.keys(DESIGNS);
 const MASCOTS={adv:'منطاد المغامرة',bld:'مكعّبات الأرقام',gdn:'أصيص الحروف',sci:'مختبر العلوم',star:'نجمة الإنجاز'};
 const SHADOW=`<ellipse cx="100" cy="246" rx="54" ry="8" fill="#0f172a" opacity=".14"/>`;

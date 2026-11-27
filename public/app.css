@@ -678,3 +678,41 @@ img.pimg{width:100%;height:100%;object-fit:contain;display:block;filter:drop-sha
 .pgrp{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:2%;width:100%;height:100%}
 .pgrp img.pimg{width:30%;height:auto;aspect-ratio:1}
 .pgrp.n1 img.pimg{width:80%}.pgrp.n2 img.pimg{width:45%}.pgrp.n3 img.pimg{width:31%}.pgrp.n4 img.pimg{width:45%}
+
+/* player: phones */
+img.rwi{width:1.25em;height:1.25em;object-fit:contain;vertical-align:-.25em}
+.rotHint{display:none}
+@media (max-width:700px) and (orientation:portrait){
+ .rotHint{display:flex;align-items:center;gap:8px;margin:6px 12px 0;padding:8px 10px;border-radius:12px;background:#1e293b;color:#e2e8f0;font:600 13px var(--f)}
+ .rotHint>svg{flex:none;width:20px;height:20px;color:var(--y)}.rotHint span{flex:1}
+ .rotHint .btn.sm{min-height:36px;padding:0 10px;font-size:13px;gap:4px}.rotHint .btn.sm svg{width:16px;height:16px}
+ .rotHint .ib{width:32px;height:32px;min-width:32px}
+}
+@media (max-width:700px),(max-height:500px){
+ .plTop{gap:4px;padding:6px 8px;overflow-x:auto;scrollbar-width:none}.plTop::-webkit-scrollbar{display:none}
+ .plTop .plTitle,.plTop .plProg{display:none}
+ .plTop .ib{width:38px;height:38px;min-width:38px;flex:none;border-radius:10px}.plTop .ib svg{width:18px;height:18px}
+ .plMain{padding:4px 8px}
+ .plBot{gap:6px;padding:6px 8px;flex-wrap:nowrap}
+ .plBot .teams{order:0;flex:1 1 auto;flex-basis:auto;min-width:0;justify-content:flex-start;padding:22px 0 2px;margin-top:-20px;scrollbar-width:none;gap:6px}
+ .plBot .teams::-webkit-scrollbar{display:none}
+ .plBot .btn{min-height:40px;height:40px;padding:0 10px;flex:none}
+ .tg{gap:0}
+ .team{min-height:38px;padding:0 10px;gap:5px;font-size:13px}
+ .team b{font-size:14px}
+ .tg .plus{min-height:38px;height:38px;width:34px;padding:0;font-size:18px}
+}
+@media (max-height:500px) and (orientation:landscape){
+ .plTop{position:absolute;top:0;inset-inline:0;z-index:5;background:linear-gradient(#0f172acc,transparent);opacity:.25;transition:opacity .2s}.plTop:hover,.plTop:focus-within{opacity:1}
+ #pl{position:fixed}.plMain{padding:2px 8px}
+}
+
+.tg .team{border-radius:0 999px 999px 0}.tg .plus{border-radius:999px 0 0 999px}
+@media (max-width:700px),(max-height:500px){.plBot .btn{min-width:44px;justify-content:center}.plBot .btn span{display:none}}
+.gend .gteams{width:100%;margin-top:12px;padding-top:12px;border-top:1px dashed var(--line,#e5e7eb)}
+.gend .gtl{display:flex;align-items:center;justify-content:center;gap:6px;font:700 14px var(--f);color:var(--mut,#64748b);margin:0 0 8px}.gend .gtl svg{width:18px;height:18px}
+.gend .gtw{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.gtb{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 16px;border-radius:999px;border:2px solid #e2e8f0;background:#fff;color:#171717;font:700 15px var(--f);cursor:pointer}
+.gtb .dot{width:12px;height:12px;border-radius:50%}
+.gtb:hover:not(:disabled){border-color:#171717}.gtb.on{border-color:#16a34a;background:#dcfce7}.gtb:disabled:not(.on){opacity:.45}
+.gend .acts .btn.ter{color:#475569}
