@@ -716,3 +716,9 @@ img.rwi{width:1.25em;height:1.25em;object-fit:contain;vertical-align:-.25em}
 .gtb .dot{width:12px;height:12px;border-radius:50%}
 .gtb:hover:not(:disabled){border-color:#171717}.gtb.on{border-color:#16a34a;background:#dcfce7}.gtb:disabled:not(.on){opacity:.45}
 .gend .acts .btn.ter{color:#475569}
+/* dark mode: world-tinted bands must stay dark so light text keeps contrast */
+@media (prefers-color-scheme:dark){
+ .hero2{background:linear-gradient(180deg,color-mix(in srgb,var(--wc) 30%,#0b0b0b),transparent 75%)}
+ .kick{background:color-mix(in srgb,var(--wc) 30%,#111);color:color-mix(in srgb,var(--wc3) 80%,#fff)}
+}
+.hn{color:light-dark(#d4d4d4,#525252)}
