@@ -489,3 +489,5 @@ button.jst:hover{transform:translateY(-4px)}.jst.cur{box-shadow:0 0 0 4px #ffcd2
 @media print{body.printing>*:not(#prt){display:none!important}body.printing #prt{display:block;padding:10mm;color:#000;font-family:var(--f)}#prt .prtH{display:flex;justify-content:space-between;border-bottom:2px solid #000;padding-bottom:6px;margin-bottom:10px;font-size:12px}#prt h1{font-size:20px}#prt .mtop{display:flex;gap:10px}#prt .stat{border:1px solid #999;border-radius:8px;padding:6px 10px}#prt .crTbl th,#prt .crTbl td{border:1px solid #999;padding:5px 8px;white-space:normal}#prt .lk2{text-decoration:none}}
 .crSesTop .lab.grow,.crLesson .lab.grow,.crAf .lab.grow{flex:1 1 240px}.crB{flex:1 0 50px}.crB small{font-size:10px}
 @media(max-width:600px){.crSes{grid-template-columns:1fr}.crSesAct .btn{flex:1 1 45%}}
+
+.logo img{height:34px;width:auto;display:block}.logo span{font:600 18px/1 var(--f);color:var(--ink2);padding-inline-start:10px;border-inline-start:1px solid var(--line)}
