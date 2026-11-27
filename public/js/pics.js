@@ -17,6 +17,7 @@ const PICS=(()=>{const m={
  '👁️':'glasses','👁':'glasses','👀':'glasses','👂':'headphones','👃':'smell_flower','👅':'lollipop','🧼':'soap','🪥':'toothbrush','🛁':'bathtub','🧴':'lotion','🚰':'drop',
  '🔺':'triangle','🟦':'square','🟨':'square','🟥':'square','🔴':'circle','🔵':'circle','🟡':'circle','🟢':'circle','🟠':'circle','⚪':'circle','🗑️':'recycle_bin','🗑':'recycle_bin','🚯':'recycle_bin',
  '🧥':'coat','🧣':'scarf','🧤':'gloves','👒':'sun_hat','🕶️':'sunglasses','🕶':'sunglasses','🏊':'beach',
+ '🔢':'dice','🔤':'toy_blocks','🔄':'cycle','🏁':'finish_flag','⚖️':'scale_bal','⚖':'scale_bal','➕':'plus','➖':'minus','❓':'question','➡️':'arrow','➡':'arrow',
  '⭐':'star','✨':'sparkles','💬':'speech','🎵':'music','📢':'megaphone','🗣️':'megaphone','🗣':'megaphone','🪨':'rock','🪶':'feather','💎':'gem','🐚':'gem'
 };return m})();
 /* returns an illustration path for a single known emoji, or '' */
