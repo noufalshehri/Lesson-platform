@@ -506,3 +506,9 @@ button.jst:hover{transform:translateY(-4px)}.jst.cur{box-shadow:0 0 0 4px #ffcd2
 .tmc b{width:78%;aspect-ratio:1;border-radius:50%;background:#fff;display:grid;place-items:center;font:800 8cqmin/1 var(--k);color:#171717}.tmr.end .tmc{animation:aPop .6s}.tmr.end .tmc b{color:#dc2626}
 .exitp{background:var(--ys,#fff5cc);border-radius:2.4cqmin;padding:2cqmin 3cqmin;margin-bottom:2cqmin;text-align:center}.exitp .kq{font-size:4.6cqmin}.scale .kq.sm{font-size:3.4cqmin;color:#475569}
 .plNotes{position:fixed;inset-inline-end:16px;bottom:84px;width:min(420px,calc(100% - 32px));background:#fff;color:#171717;border-radius:16px;padding:14px 16px;box-shadow:0 12px 24px rgba(0,0,0,.25);z-index:60;border-inline-start:5px solid #ffc800;font:500 15px/1.7 var(--f)}.plNotes b{display:block;margin-bottom:4px}.plNotes p{margin:0}
+/* keep pictures inside their cards: size emoji to the card, not the screen */
+.mcf,.gpic,.htl{container-type:inline-size}.gpic .emo{font-size:70cqi}
+.mcf .emo{font-size:clamp(28px,52cqi,72px)}
+.mp{width:80%}.mp.sm{width:55%}
+.mcf .mp img{max-height:100%;object-fit:contain}
+.mci,.mcf{overflow:hidden}
