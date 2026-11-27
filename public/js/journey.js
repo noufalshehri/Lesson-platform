@@ -57,7 +57,7 @@ function jStep(x,s){switch(x.k){
  case 'count':{x.need=1;if(!x.opts){const near=shuffle([x.num-1,x.num+1,x.num+2,x.num-2].filter(v=>v>=1&&v<=10)).slice(0,2);x.opts=shuffle([x.num,...near])}return `<div class="jcard jcnt"><h2 class="jh3">🔢 عُدّ ثم اختر الرقم</h2><div class="jtray">${Array.from({length:x.num},()=>`<span>${picHTML(x.pic)}</span>`).join('')}</div><div class="jopts">${x.opts.map(v=>`<button class="jopt big" data-jcnt="${v}">${ar(v)}</button>`).join('')}</div><p class="jfb2" id="jfb" aria-live="polite"></p></div>`}}return ''}
 function jCoin(n=1){JR.prog.coins=(JR.prog.coins|0)+n;jSave();const p=$('.jpill:nth-child(2) b');if(p)p.textContent=ar(JR.prog.coins)}
 function jOk(x,msg){x.ok=1;const b=$('[data-jnext]');if(b)b.disabled=false;const f=$('#jfb');if(f){f.textContent=msg||'أحسنت! 🎉';f.className='jfb2 good'}sfx('win');confetti(80)}
-function jNo(msg){const f=$('#jfb');if(f){f.textContent=msg||'محاولة جميلة! جرّب مرة أخرى 💪';f.className='jfb2 bad'}sfx('no');JR.cur.miss++}
+function jNo(msg){const f=$('#jfb');if(f){f.textContent=msg||'محاولة جميلة! جرّب مرة أخرى ✨';f.className='jfb2 bad'}sfx('no');JR.cur.miss++}
 function jFinishStation(){const s=JR.st[JR.si],q=JR.cur,stars=q.total?Math.max(1,Math.round(Math.max(0,q.total-q.miss)/q.total*3)):3;
  JR.prog.stars[JR.si]=Math.max(JR.prog.stars[JR.si]|0,stars);if(!JR.prog.done.includes(JR.si))JR.prog.done.push(JR.si);jCoin(10);jSave();sfx('end');confetti(200);
  const all=JR.prog.done.length===JR.st.length,nx=JR.si+1<JR.st.length;

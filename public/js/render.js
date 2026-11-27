@@ -3,7 +3,10 @@
 const GRADS=['linear-gradient(135deg,#fde68a,#f9a8d4)','linear-gradient(135deg,#a5f3fc,#c4b5fd)','linear-gradient(135deg,#bbf7d0,#fde68a)','linear-gradient(160deg,#1e1b4b,#7c3aed)','linear-gradient(135deg,#fecaca,#fef3c7)','linear-gradient(180deg,#e0f2fe,#ffffff)','#fff7ed','#fdf4ff','#ffffff','#14532d'];
 const PALETTE=['#1f2937','#ffffff','#0284c7','#db2777','#7c3aed','#ea580c','#16a34a','#ca8a04','#dc2626','#0891b2'];
 const isSrc=v=>!!safeSrc(v);
-const picHTML=v=>{const s=safeSrc(v);return s?`<img src="${s}" alt="">`:`<span class="emo">${esc(v||'⭐')}</span>`};
+const picHTML=v=>{const s=safeSrc(v);if(s)return `<img src="${s}" alt="">`;v=v||'⭐';const p=picSrc(v);if(p)return `<img class="pimg" src="${p}" alt="" draggable="false">`;
+ const parts=typeof Intl!=='undefined'&&Intl.Segmenter?[...new Intl.Segmenter().segment(String(v))].map(x=>x.segment).filter(x=>x.trim()):[];
+ if(parts.length>1&&parts.length<=12&&parts.every(x=>picSrc(x)))return `<span class="pgrp n${Math.min(parts.length,6)}">${parts.map(x=>`<img class="pimg" src="${picSrc(x)}" alt="" draggable="false">`).join('')}</span>`;
+ return `<span class="emo">${esc(v)}</span>`};
 const EL=(t,o)=>({id:uid(),t,...o});
 const rowsOK=(a,k=0)=>(a||[]).filter(r=>Array.isArray(r)&&String(r[k]||'').trim());
 

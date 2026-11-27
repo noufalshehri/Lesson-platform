@@ -511,7 +511,7 @@ button.jst:hover{transform:translateY(-4px)}.jst.cur{box-shadow:0 0 0 4px #ffcd2
 .mcf .emo{font-size:clamp(28px,52cqi,72px)}
 .mp{width:80%}.mp.sm{width:55%}
 .mcf .mp img{max-height:100%;object-fit:contain}
-.mci,.mcf{overflow:hidden}
+.mcf{overflow:hidden}
 
 /* ===================== Design system v2 (MADBOUT) =====================
    Tokens: radius 8/12/16/24 · shadow 1/2/3 · spacing 4px scale · yellow = the one primary action. */
@@ -672,3 +672,9 @@ body[data-page=studio] .ft2{display:none}
 @media (prefers-reduced-motion:reduce){.sitem,.sbin{transition:none}.sitem.in{animation:none}}
 
 .sitem .sp{overflow:hidden;flex:none;container-type:inline-size}.sitem .sp>*{max-width:100%;max-height:100%}.sitem .sp svg{width:100%;height:100%}.sitem .sp .emo{font-size:clamp(10px,80cqi,40px)}
+
+/* illustrations (img/p) */
+img.pimg{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 .6cqmin .6cqmin rgba(15,23,42,.12));pointer-events:none;user-select:none}
+.pgrp{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:2%;width:100%;height:100%}
+.pgrp img.pimg{width:30%;height:auto;aspect-ratio:1}
+.pgrp.n1 img.pimg{width:80%}.pgrp.n2 img.pimg{width:45%}.pgrp.n3 img.pimg{width:31%}.pgrp.n4 img.pimg{width:45%}
