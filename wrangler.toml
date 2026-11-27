@@ -12,7 +12,7 @@ DEMO_PAYMENTS = "true"
 [[d1_databases]]
 binding = "DB"
 database_name = "madbot-lessons"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+database_id = "09b2a440-ee95-4d1a-9aec-ccebe676ddf8"
 
 # Optional: images uploaded from the admin dashboard
 # [[r2_buckets]]
