@@ -1,0 +1,20 @@
+# Cloudflare Pages project settings (used by `wrangler pages dev` and deployments)
+name = "madbot-lesson-platform"
+compatibility_date = "2026-11-01"
+pages_build_output_dir = "public"
+
+[vars]
+# Comma-separated emails that get the admin dashboard
+ADMIN_EMAILS = "admin@example.com"
+# "true" turns on the demo checkout (no money is taken). Keep "false" in production until a real gateway is connected.
+DEMO_PAYMENTS = "true"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "madbot-lessons"
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+
+# Optional: images uploaded from the admin dashboard
+# [[r2_buckets]]
+# binding = "FILES"
+# bucket_name = "madbot-lesson-files"
