@@ -106,7 +106,7 @@ const ENG={
   M.innerHTML=`<div class="bxg">${cells.map((c,i)=>`<button class="bxc" data-i="${i}" aria-label="صندوق ${ar(i+1)}"><span class="bxn">${ar(i+1)}</span>${STK.gift}</button>`).join('')}</div><div class="bxq" id="bxq"><p class="hint">اختاروا صندوقًا</p></div>`;
   M.onclick=e=>{const b=e.target.closest('button');if(!b)return;const q=$('#bxq',M);
    if(b.classList.contains('bxc')){if(b.classList.contains('open')||$('#bxq .gq'))return;const c=cells[+b.dataset.i];b.classList.add('open');sfx('pop');opened++;
-    if(c.s){b.innerHTML=`<span class="bxs">${STK.star}</span>`;q.innerHTML=`<div class="gq"><h3>${esc(c.s[0])}</h3></div>`;const n=num(c.s[1]);if(n>0)A.add(n);if(opened===cells.length)setTimeout(()=>A.end('فتحتم كل الصناديق!'),900);return}
+    if(c.s){b.innerHTML=`<span class="bxs">${STK.star}</span>`;const n=num(c.s[1]);if(n>0)A.add(n);if(opened===cells.length){q.innerHTML=`<div class="gsur"><h3>${esc(c.s[0])}</h3></div>`;setTimeout(()=>A.end('فتحتم كل الصناديق!'),1200);return}q.innerHTML=`<div class="gsur"><h3>${esc(c.s[0])}</h3><p class="hint">اختاروا صندوقًا آخر</p></div>`;return}
     b.innerHTML=`<span class="bxs">?</span>`;q.innerHTML=`<div class="gq"><h3>${esc(c.r[0])}</h3>${c.r[1]?`<p class="ans" hidden>${esc(c.r[1])}</p><button class="btn sec" data-rev>أظهري الإجابة</button>`:''}<div class="acts"><button class="btn pri" data-y>${ic('check')}أحسنوا</button><button class="btn sec" data-n>لم ينجحوا</button></div></div>`;icons();return}
    if(b.hasAttribute('data-rev')){$('.ans',q).hidden=false;b.remove();return}
    if(b.hasAttribute('data-y')||b.hasAttribute('data-n')){if(b.hasAttribute('data-y'))A.add(1);q.innerHTML='<p class="hint">اختاروا صندوقًا آخر</p>';if(opened===cells.length)A.end('فتحتم كل الصناديق!')}}},
