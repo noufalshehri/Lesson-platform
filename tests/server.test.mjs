@@ -161,3 +161,10 @@ test('no provider key -> clear not_configured; missing migration -> clear error'
   const s2 = setup(); await signup(s2.call, 'teacher', 't8@school.sa'); s2.env.DB._db.exec('DROP TABLE ai_usage');
   assert.equal((await s2.call('GET', '/ai/status')).body.error, 'ai_not_migrated');
 });
+
+test('invalid Gemini key (HTTP 400) is reported precisely', async () => {
+  const { call } = setup(); await signup(call, 'teacher', 't9@school.sa');
+  const f = async () => new Response('{"error":{"code":400,"message":"API key not valid. Please pass a valid API key.","status":"INVALID_ARGUMENT"}}', { status: 400 });
+  const r = await call('POST', '/ai/generate', { module: 'quiz', input: INPUT }, 'teacher', f);
+  assert.equal(r.body.error, 'bad_key'); assert.ok(r.body.message.includes('GEMINI_API_KEY'));
+});
