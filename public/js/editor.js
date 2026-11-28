@@ -111,7 +111,7 @@ function bindStudio(){const app=$('#app');
   else if(d.pwl)el.data[d.pwl]=t.value.split('\n').map(x=>x.trim()).filter(Boolean);
   else if(d.pwc!=null)el.data.items=t.value.split('\n').map(x=>x.trim()).filter(Boolean).map(x=>{const m=x.match(/^(\S+)\s+(.*)$/);return m?{pic:m[1],txt:m[2]}:{pic:'⭐',txt:x}});
   else if(d.popt!=null)el.data.opts[+d.popt].x=t.value;else if(d.popp!=null)el.data.opts[+d.popp].p=t.value;else return;
-  if(el.kind==='order'&&d.pw==='word'){const w=String(el.data.word||'').replace(/\s/g,'');el.data.mix=shuffle(Array.from(w))}
+  if(el.kind==='order'&&d.pw==='word'){el.data.mix=shuffle(letters(el.data.word))}
   stRefreshStage();saveLesson()};
  app.onchange=e=>{const t=e.target,s=curS(),el=selE();if(!s)return;
   if(t.dataset.str){push();s.tr=t.value;return saveLesson()}
@@ -171,7 +171,7 @@ async function exportPptx(Ls){if(!lim('export'))return needPlan('تصدير Powe
      if(e.kind==='mcq'){sl.addText(String(wd.q||''),{...tx,x,y,w,h:.6,fontSize:22,bold:true,color:'1F2937',align:'center'});(wd.opts||[]).forEach((o,i)=>{const n=(wd.opts||[]).length,bw=w/n-.15;sl.addText((wd.tf?'':'أبجد'[i]+'. ')+String(o.x||o.p||''),{...tx,x:x+i*(bw+.15),y:y+(h||3)*.55,w:bw,h:.6,fontSize:18,bold:true,align:'center',color:'1F2937',fill:{color:'FFFFFF'},line:{color:'CBD5E1',width:1.5}})});continue}
      if(['list','goals','steps','tasks'].includes(e.kind))lines=(wd.items||[]).map((t,i)=>(e.kind==='steps'?ar(i+1)+'. ':'• ')+t);
      else if(e.kind==='cards')lines=(wd.items||[]).map(t=>(isSrc(t.pic)?'':t.pic+' ')+t.txt);else if(e.kind==='flip')lines=[`${wd.pic||''} ${wd.word||''}`,wd.info||''];
-     else if(e.kind==='order')lines=['رتّبوا الحروف: '+(wd.mix||Array.from(String(wd.word||''))).join('  ')];else if(e.kind==='scale')lines=[...(wd.p?['بطاقة الخروج: '+wd.p,'']:[]),wd.q||'','فهمت جيدًا  ·  فهمت أغلبه  ·  أحتاج مساعدة'];
+     else if(e.kind==='order')lines=['رتّبوا الحروف: '+(wd.mix||letters(wd.word)).join('  ')];else if(e.kind==='scale')lines=[...(wd.p?['بطاقة الخروج: '+wd.p,'']:[]),wd.q||'','فهمت جيدًا  ·  فهمت أغلبه  ·  أحتاج مساعدة'];
      else if(e.kind==='levels')lines=(wd.items||[]).map(t=>{const k=LVK(t.lv);return `${k?LVL[k].n+' ('+LVL[k].d+')':t.lv}: ${t.t}`});
      else if(e.kind==='sort')lines=(wd.cats||[]).map((c,k)=>c+': '+(wd.items||[]).filter(x=>x.c===k).map(x=>x.t).join('، '));
      else if(e.kind==='compare')lines=(wd.items||[]).flatMap(r=>['✗ '+r[0],'✓ '+r[1],'']);

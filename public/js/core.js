@@ -15,6 +15,8 @@ const safeSrc=s=>{s=String(s||'');return /^data:image\/(png|jpe?g|webp|gif);base
 const today=()=>new Date().toISOString().slice(0,10);
 const addDays=(n)=>new Date(Date.now()+n*864e5).toISOString().slice(0,10);
 const fmtDate=d=>{try{return new Date(d).toLocaleDateString('ar-SA-u-ca-gregory',{year:'numeric',month:'short',day:'numeric'})}catch(e){return d}};
+/* letters of a word for «رتّب الحروف»: harakat, shadda and tanween stay on their letter; tatweel is dropped */
+const letters=s=>{const t=String(s??'').replace(/\s|\u0640/g,''),out=[];for(const c of t){if(/[\u064B-\u065F\u0670\u06D6-\u06ED]/.test(c)&&out.length)out[out.length-1]+=c;else if(!/[\u064B-\u065F\u0670\u06D6-\u06ED]/.test(c))out.push(c)}return out};
 const num=v=>{const n=parseFloat(en(v));return isNaN(n)?0:n};
 
 let _tt=0;
