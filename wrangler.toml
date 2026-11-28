@@ -8,6 +8,9 @@ pages_build_output_dir = "public"
 ADMIN_EMAILS = "noufallshehri@gmail.com,matbot.app@gmail.com"
 # "true" turns on the demo checkout (no money is taken). Keep "false" in production until a real gateway is connected.
 DEMO_PAYMENTS = "true"
+# AI generator models (the API key is a secret: set GEMINI_API_KEY in the dashboard, never here)
+GEMINI_MODEL = "gemini-3.5-flash"
+GEMINI_FALLBACK_MODEL = "gemini-3.1-flash-lite"
 
 [[d1_databases]]
 binding = "DB"

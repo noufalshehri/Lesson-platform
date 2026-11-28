@@ -1,12 +1,12 @@
 'use strict';
 /* app.js: routing, header, boot */
 const ROUTES={home:[vHome,null,0],templates:[vTemplates,()=>tpPanel(),0],lessons:[vLessons,()=>lpPanel(),0],games:[vGames,()=>gpPanel(),0],studio:[vStudio,()=>{bindStudio();stRender()},0,'studio'],
- class:[vClassroom,()=>{bindClassroom();crBar();crPanel()},1,'cr'],motivation:[vMotivation,()=>{bindMotivation();clsBar();motPanel()},1,'mot'],pricing:[vPricing,null,0],journey:[vJourney,()=>jMount(),0],dashboard:[vDashboard,()=>dbPanel(),1],qr:[vQR,()=>qrMount(),0],admin:[vAdmin,()=>{bindAdmin();adPanel()},0,'admin']};
-const NAV=[['home','الرئيسية'],['templates','القوالب'],['lessons','الدروس'],['games','الألعاب'],['studio','الاستوديو'],['class','فصلي'],['motivation','التحفيز'],['qr','صانع QR'],['pricing','الباقات']];
-const TABS=[['home','الرئيسية','house'],['lessons','الدروس','book-open-check'],['studio','الاستوديو','palette'],['games','الألعاب','gamepad-2'],['class','فصلي','users-round']];
-const NAVI={home:'house',templates:'layout-template',lessons:'book-open-check',games:'gamepad-2',studio:'palette',class:'users-round',motivation:'trophy',pricing:'badge-check',qr:'qr-code',admin:'shield',dashboard:'circle-user-round'};
+ class:[vClassroom,()=>{bindClassroom();crBar();crPanel()},1,'cr'],motivation:[vMotivation,()=>{bindMotivation();clsBar();motPanel()},1,'mot'],pricing:[vPricing,null,0],journey:[vJourney,()=>jMount(),0],dashboard:[vDashboard,()=>dbPanel(),1],qr:[vQR,()=>qrMount(),0],ai:[vAI,()=>aiMount(),1],admin:[vAdmin,()=>{bindAdmin();adPanel()},0,'admin']};
+const NAV=[['home','الرئيسية'],['ai','المساعد الذكي'],['templates','القوالب'],['lessons','الدروس'],['games','الألعاب'],['studio','الاستوديو'],['class','فصلي'],['motivation','التحفيز'],['qr','صانع QR'],['pricing','الباقات']];
+const TABS=[['home','الرئيسية','house'],['lessons','الدروس','book-open-check'],['ai','المساعد','sparkles'],['studio','الاستوديو','palette'],['class','فصلي','users-round']];
+const NAVI={home:'house',ai:'sparkles',templates:'layout-template',lessons:'book-open-check',games:'gamepad-2',studio:'palette',class:'users-round',motivation:'trophy',pricing:'badge-check',qr:'qr-code',admin:'shield',dashboard:'circle-user-round'};
 function hdr(){const v=(location.hash||'#home').slice(1).split('-')[0],all=[...NAV,...(S.admin?[['admin','الإدارة']]:[])];
- const PRIM=['home','lessons','templates','games','studio','class'],more=all.filter(([k])=>!PRIM.includes(k)),lnk=([k,l])=>`<a href="#${k}" ${k===v?'aria-current="page" class="on"':''}>${l}</a>`;
+ const PRIM=['home','ai','lessons','templates','games','studio','class'],more=all.filter(([k])=>!PRIM.includes(k)),lnk=([k,l])=>`<a href="#${k}" ${k===v?'aria-current="page" class="on"':''}>${l}</a>`;
  $('#nav').innerHTML=all.filter(([k])=>PRIM.includes(k)).map(lnk).join('')+(more.length?`<details class="nmore"><summary class="${more.some(([k])=>k===v)?'on':''}">المزيد${ic('chevron-down')}</summary><div class="nmenu">${more.map(([k,l])=>`<a href="#${k}" ${k===v?'class="on"':''}>${ic(NAVI[k]||'circle')}${l}</a>`).join('')}</div></details>`:'');
  $('#acct').innerHTML=ME.p?`<a class="btn sec acc" href="#dashboard" aria-label="حسابي">${ic('circle-user-round')}<span>${esc(ME.p.name)}</span><em class="bd y">${esc(curPlan().name)}</em></a>`:`<a class="btn pri" href="#dashboard">${ic('log-in')}<span>ابدئي مجانًا</span></a>`;
  $('#tabbar').innerHTML=TABS.map(([k,l,i])=>`<a href="#${k}" ${k===v?'class="on" aria-current="page"':''}>${ic(i)}<span>${l}</span></a>`).join('');
@@ -17,7 +17,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){if($('#sheet').clas
 document.addEventListener('click',e=>{$$('.nmore[open]').forEach(d=>{if(!d.contains(e.target)||e.target.closest('.nmenu a'))d.open=false})});
 const SKEL=`<div class="skel" aria-busy="true" aria-label="جارٍ التحميل"><div class="sk t"></div><div class="sk l"></div><div class="sk b"></div><div class="skg"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div></div>`;
 let routing=0;
-async function route(){const my=++routing;let v=(location.hash||'#home').slice(1);if(v.startsWith('journey-')){JR.pending=v.slice(8);v='journey'}if(!ROUTES[v])v='home';const R=ROUTES[v];
+async function route(){const my=++routing;let v=(location.hash||'#home').slice(1);if(v.startsWith('journey-')){JR.pending=v.slice(8);v='journey'}if(v.startsWith('ai-')&&typeof AIM!=='undefined'&&AIM[v.slice(3)]){AI.pendingMod=v.slice(3);v='ai'}if(!ROUTES[v])v='home';const R=ROUTES[v];
  if(!ME.ready){$('#app').innerHTML=SKEL;await loadMe();if(my!==routing)return}
  if(R[2]&&!ME.p){const ok=await ensureMe();if(my!==routing)return;if(!ok){location.hash='home';return}}
  if(v!=='studio')MOT.flush();
