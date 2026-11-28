@@ -945,3 +945,4 @@ img.pimg{width:1.15em;height:1.15em;max-width:100%;flex:none;place-self:center;o
 .ppD{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.ppD>div{border:1px solid #999;border-radius:8px;padding:6px 8px}.ppD p{margin:4px 0 0;font-size:14px}
 .wsP .btn.ter{color:#333}
 @media print{#prt [data-noprint],#prt .wsTools{display:none!important}#prt .wsP{border:0;box-shadow:none;padding:0;max-width:none}#prt .wsS h2,#prt .wsS h2>b,#prt .ppHd th,#prt .wsOpts .k b,#prt .wsChips .kc{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+.aiPre{white-space:pre-wrap;word-break:break-word;background:var(--bg3);padding:10px;border-radius:var(--r2);font-size:13px;max-height:220px;overflow:auto}
