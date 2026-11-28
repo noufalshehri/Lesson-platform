@@ -162,8 +162,16 @@ const DESIGNS={
  jgl:{name:'الغابة الخضراء',c:'#15803d',c2:'#dcfce7',c3:'#86efac',m:'tree',reward:'🍃'},
  dsr:{name:'رمال الصحراء',c:'#b45309',c2:'#fef3c7',c3:'#fcd34d',m:'lan',reward:'⭐'},
  tre:{name:'جزيرة الكنز',c:'#0f766e',c2:'#ccfbf1',c3:'#5eead4',m:'chest',reward:'🪙'},
- calm:{name:'هادئ وبسيط',c:'#475569',c2:'#f1f5f9',c3:'#cbd5e1',m:'book',reward:'⭐'}
+ calm:{name:'هادئ وبسيط',c:'#475569',c2:'#f1f5f9',c3:'#cbd5e1',m:'book',reward:'⭐'},
+ /* watercolor worlds: hand-painted backgrounds in img/wc */
+ wcf:{name:'غابة مائية',c:'#4d7c0f',c2:'#f8f4c6',c3:'#a3c45a',m:'tree',reward:'🍃',img:1,wc:1},
+ wcs:{name:'ربيع مائي',c:'#be185d',c2:'#fdf2f8',c3:'#f9a8d4',m:'gdn',reward:'🌸',img:1,wc:1},
+ wcb:{name:'شاطئ مائي',c:'#0369a1',c2:'#f0f9ff',c3:'#7dd3fc',m:'sub',reward:'🌊',img:1,wc:1},
+ wcd:{name:'صحراء مائية',c:'#c2410c',c2:'#fff7ed',c3:'#fdba74',m:'lan',reward:'⭐',img:1,wc:1},
+ wca:{name:'خريف مائي',c:'#b45309',c2:'#fffbeb',c3:'#fcd34d',m:'book',reward:'🍂',img:1,wc:1},
+ wcn:{name:'ليلة مائية',c:'#1e3a8a',c2:'#eef2ff',c3:'#a5b4fc',m:'lan',reward:'🌙',img:1,wc:1}
 };
+const DKW=['wcf','wcs','wcb','wcd','wca','wcn'];
 const DK7=['adv','bld','gdn','space','sea','chalk','note'];
 const DK=Object.keys(DESIGNS);
 const MASCOTS={adv:'منطاد المغامرة',bld:'مكعّبات الأرقام',gdn:'أصيص الحروف',sci:'مختبر العلوم',spc:'صاروخ الفضاء',sub:'غوّاصة البحر',pen:'علبة الأقلام',tree:'شجرة الغابة',lan:'فانوس الصحراء',chest:'صندوق الكنز',book:'كتاب القراءة',star:'نجمة الإنجاز'};
@@ -237,5 +245,5 @@ const COMP={
   ${spark(30,30,8,'#fde047')}${spark(170,50,6,'#fde047')}${spark(178,170,5,'#fde047')}${spark(24,160,4,'#fde047')}`
 };
 function mascot(k){const f=COMP[k]||COMP.adv;return `<svg class="masc comp" viewBox="0 0 200 256" aria-hidden="true">${f()}</svg>`}
-function scene(w){if(['adv','bld','gdn'].includes(w))return sceneBase(w);return `<svg class="scene" viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${sceneMore(DESIGNS[w]?w:'adv')}</svg>`}
+function scene(w){if(DESIGNS[w]&&DESIGNS[w].img)return `<svg class="scene" viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><image href="img/wc/${w}.webp" width="320" height="180" preserveAspectRatio="xMidYMid slice"/></svg>`;if(['adv','bld','gdn'].includes(w))return sceneBase(w);return `<svg class="scene" viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${sceneMore(DESIGNS[w]?w:'adv')}</svg>`}
 const seal=c=>`<svg class="cseal" viewBox="0 0 60 60" aria-hidden="true"><path d="${starPath(30,30,28,.6)}" fill="#fde047" stroke="#f59e0b" stroke-width="2" stroke-linejoin="round"/><circle cx="30" cy="30" r="14" fill="${c}"/><path d="${starPath(30,30,8,.45)}" fill="#fff"/></svg>`;

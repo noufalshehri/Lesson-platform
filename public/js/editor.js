@@ -31,12 +31,12 @@ function stPanel(){const p=$('#stPanel');if(!p)return;const s=curS(),e=selE();
   <h3 class="ph">تفاعلي</h3><div class="pgrid">${[['mcq','اختيار من متعدد'],['tf','صح أم خطأ'],['order','رتّب الحروف'],['flip','بطاقة تنقلب'],['list','قائمة نقاط'],['goals','أهداف'],['steps','خطوات'],['cards','بطاقات أمثلة'],['scale','قيّم نفسك'],['game','لعبة'],['podium','منصة التتويج']].map(([k,l])=>`<button class="pbtn" data-addw="${k}">${l}</button>`).join('')}</div>
   <h3 class="ph">رفاق العرض</h3><div class="sgrid">${Object.keys(MASCOTS).map(k=>`<button class="sbtn tall" data-addm="${k}" aria-label="${MASCOTS[k]}">${mascot(k)}</button>`).join('')}</div>
   <h3 class="ph">ملصقات</h3><div class="sgrid">${Object.keys(STK).map(k=>`<button class="sbtn" data-adds="${k}" aria-label="${STK_NAMES[k]}">${STK[k]}</button>`).join('')}</div>
-  <h3 class="ph">صور ورموز</h3>${Object.entries(EMOJI).map(([c,es])=>`<p class="note">${c}</p><div class="egrid">${Array.from(es.matchAll(/\p{Extended_Pictographic}️?/gu)).map(m=>`<button class="ebtn" data-adde="${m[0]}">${m[0]}</button>`).join('')}</div>`).join('')}<button class="btn sec" data-addimg>${ic('image-up')}ارفعي صورة</button>
+  <h3 class="ph">صور</h3><input class="in pkQ" type="search" data-pkq placeholder="ابحثي: تفاحة، شمس، كتاب…" value="${esc(PK.q)}" aria-label="بحث في الصور">${picTabsHTML()}<div class="pkGrid sm" id="pkEl">${picGridHTML('data-adde','')}</div><button class="btn sec" data-addimg>${ic('image-up')}ارفعي صورة من جهازك</button><details class="pkMore"><summary>رموز إضافية</summary>${Object.entries(EMOJI).map(([c,es])=>`<p class="note">${c}</p><div class="egrid">${Array.from(es.matchAll(/\p{Extended_Pictographic}️?/gu)).map(m=>`<button class="ebtn" data-adde="${m[0]}">${m[0]}</button>`).join('')}</div>`).join('')}</details>
   <h3 class="ph">أشكال</h3><div class="pgrid">${[['card','بطاقة'],['mini','بطاقة صغيرة'],['note','ورقة ملاحظة'],['ribbon','شريط'],['page','صفحة كتاب'],['circle','دائرة']].map(([k,l])=>`<button class="pbtn" data-addbx="${k}">${l}</button>`).join('')}</div>`;
  else if(ED.tab==='bg')p.innerHTML=`<h3 class="ph">عوالم مرسومة</h3><div class="bgg">${DK.map(k=>`<button class="bgb ${s.bg==null&&s.d===k?'on':''}" data-bgd="${k}"><div class="stage pv">${noBtn(slideHTML({d:k,els:[]}))}</div><span>${DESIGNS[k].name}</span></button>`).join('')}</div>
   <h3 class="ph">ألوان وتدرّجات</h3><div class="pgrid sw">${GRADS.map((g,i)=>`<button class="swb ${s.bg===i?'on':''}" data-bgg="${i}" style="background:${g}" aria-label="خلفية ${ar(i+1)}"></button>`).join('')}</div><button class="btn sec" data-bgall>${ic('copy-check')}طبّقي على كل الشرائح</button>`;
  else if(ED.tab==='slide')p.innerHTML=`<label class="lab">الانتقال إلى هذه الشريحة<select class="in" data-str>${[['fade','تلاشي'],['slide','انزلاق'],['zoom','تكبير'],['flip','قلب'],['none','بدون']].map(([k,l])=>`<option value="${k}" ${s.tr===k?'selected':''}>${l}</option>`).join('')}</select></label><div class="acts"><button class="btn sec" data-dup>${ic('copy')}تكرار الشريحة</button><button class="btn sec" data-dels>${ic('trash-2')}حذف الشريحة</button></div><h3 class="ph">إضافة شريحة جاهزة</h3>${layoutMenu()}`;
- else{if(!e){p.innerHTML=`<p class="note">اختاري عنصرًا من الشريحة لتعديل خصائصه.</p>`;return}p.innerHTML=propsHTML(e)}
+ else{if(!e){p.innerHTML=`<p class="note">اختاري عنصرًا من الشريحة لتعديل خصائصه.</p>`;return}p.innerHTML=propsHTML(e);enhancePicFields(p)}
  icons()}
 const LAYOUTS=[['cover','غلاف'],['model','نمذجة'],['mistakes','خطأ شائع'],['activity','نشاط بمؤقت'],['levels','أنشطة متمايزة'],['exit','بطاقة خروج'],['text','نص'],['textPic','نص وصورة'],['goals','أهداف'],['mcq','سؤال اختيار'],['tf','صح أم خطأ'],['order','رتّب الحروف'],['flip','بطاقة'],['count','عُدّ معي'],['list','قائمة'],['steps','خطوات'],['story','صفحة قصة'],['scale','قيّم نفسك'],['game','لعبة'],['reward','تتويج'],['blank','فارغة']];
 const layoutMenu=()=>`<div class="lgrid">${LAYOUTS.map(([k,l])=>`<button class="lbtn" data-lay="${k}">${thumb(mkLayout(k,curS()?curS().d:'adv'))}<span>${l}</span></button>`).join('')}</div>`;
@@ -85,6 +85,7 @@ function bindStudio(){const app=$('#app');
   if(d.addw)return addEl(EL('w',{kind:d.addw==='tf'?'mcq':d.addw,data:clone(WDEF[d.addw]),x:24,y:18,w:66,h:66,anim:'pop'}));
   if(d.addm)return addEl(EL('masc',{k:d.addm,x:4,y:46,w:16,say:''}));
   if(d.adds)return addEl(EL('stk',{k:d.adds,x:44,y:40,w:10}));
+  if(d.pkg){PK.g=d.pkg;$$('[data-pkg]').forEach(x=>x.setAttribute('aria-pressed',x===b));const g=$('#pkEl');if(g)g.innerHTML=picGridHTML('data-adde','');return}
   if(d.adde)return addEl(EL('pic',{emo:d.adde,fr:'none',x:42,y:36,w:16}));
   if(d.addbx)return addEl(EL('box',{s:d.addbx,x:30,y:25,w:40,h:d.addbx==='circle'?50:40,z:0}));
   if(b.hasAttribute('data-addimg')||b.hasAttribute('data-repimg')){if(!lim('upload'))return needPlan('رفع الصور متاح في الباقة الأساسية فما فوق');const src=await pickImage();if(!src)return;if(b.hasAttribute('data-repimg')&&el){push();el.src=src;delete el.emo;return changed(true)}return addEl(EL('pic',{src,fr:'frame',x:35,y:25,w:30}))}
@@ -102,7 +103,7 @@ function bindStudio(){const app=$('#app');
   if(b.hasAttribute('data-dele')){push();s.els=s.els.filter(x=>x!==el);ED.sel=null;return changed(true)}
   if(d.pdel!=null){push();el.data.opts.splice(+d.pdel,1);if(!el.data.opts.some(o=>o.ok)&&el.data.opts[0])el.data.opts[0].ok=1;return changed(true)}
   if(b.hasAttribute('data-padd')){push();el.data.opts.push({x:'خيار',p:el.data.big?'⭐':undefined});return changed(true)}};
- app.oninput=e=>{const t=e.target,el=selE();if(t.id==='stTitle'){ED.L.title=t.value.slice(0,80);return saveLesson()}if(!el)return;const d=t.dataset;
+ app.oninput=e=>{const t=e.target,el=selE();if(t.dataset.pkq!=null){PK.q=t.value;const g=$('#pkEl');if(g)g.innerHTML=picGridHTML('data-adde','');return}if(t.id==='stTitle'){ED.L.title=t.value.slice(0,80);return saveLesson()}if(!el)return;const d=t.dataset;
   if(!ED._typing){push();ED._typing=1}clearTimeout(ED._tt);ED._tt=setTimeout(()=>ED._typing=0,800);
   if(d.pa){el[d.pa]=['fs','r'].includes(d.pa)?num(t.value):t.value}
   else if(d.pw){el.data[d.pw]=d.pw==='n'?Math.min(12,Math.max(1,num(t.value)|0)):t.value}
@@ -151,6 +152,7 @@ function smartDialog(prefill){const st={cat:(prefill&&prefill.cat)||'explain',d:
 function loadScript(src){return new Promise((res,rej)=>{if($(`script[src="${src}"]`))return res();const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s)})}
 const okImg=d=>typeof d==='string'&&/^data:image\/(png|jpe?g|gif);base64,[A-Za-z0-9+/=]{200,}$/.test(d);
 let _svgC=null;
+function rasterData(url,w,h){return new Promise(res=>{const im=new Image();let done=false;const fin=v=>{if(!done){done=true;res(okImg(v)?v:null)}};setTimeout(()=>fin(null),8000);im.onload=()=>{try{const c=_svgC||(_svgC=document.createElement('canvas'));c.width=w;c.height=h;c.getContext('2d').drawImage(im,0,0,w,h);fin(c.toDataURL('image/jpeg',.86))}catch(e){fin(null)}};im.onerror=()=>fin(null);im.src=url})}
 function svgPng(svg,w,h){return new Promise(res=>{let done=false;const fin=v=>{if(!done){done=true;res(okImg(v)?v:null)}};setTimeout(()=>fin(null),6000);
  let x=String(svg||'');if(!/^\s*<svg[\s>]/i.test(x))return fin(null);x=x.replace(/<svg\b([^>]*)>/i,(m,a)=>`<svg${/xmlns=/.test(a)?'':' xmlns="http://www.w3.org/2000/svg"'}${a.replace(/\s(width|height)="[^"]*"/g,'')} width="${w}" height="${h}">`);
  const im=new Image();im.onload=()=>{try{const c=_svgC||(_svgC=document.createElement('canvas'));c.width=w;c.height=h;const g=c.getContext('2d');g.clearRect(0,0,w,h);g.drawImage(im,0,0,w,h);fin(c.toDataURL('image/png'))}catch(e){fin(null)}};im.onerror=()=>fin(null);im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(x)})}
@@ -158,7 +160,7 @@ async function exportPptx(Ls){if(!lim('export'))return needPlan('تصدير Powe
  {let ok=false;for(const u of['https://cdnjs.cloudflare.com/ajax/libs/pptxgenjs/3.12.0/pptxgen.bundle.js','https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js']){try{await loadScript(u);if(window.PptxGenJS){ok=true;break}}catch(e){}}if(!ok)return toast('تعذّر تحميل أداة التصدير، تأكدي من الاتصال وحاولي مرة أخرى')}
  try{const P=new PptxGenJS();let skip=0;P.layout='LAYOUT_16x9';P.rtlMode=true;P.title=Ls.title;const H=5.625,Wd=10,pt=v=>Math.max(8,Math.round(num(v)*H*72/100));
   for(const s of Ls.slides){const sl=P.addSlide();const D=DESIGNS[s.d]||DESIGNS.adv;
-   if(s.bg!=null&&GRADS[s.bg]){const m=GRADS[s.bg].match(/#[0-9a-f]{6}/i);sl.background={color:(m?m[0]:'#ffffff').slice(1)}}else{const bg=await svgPng(scene(s.d||'adv'),1280,720);if(bg)sl.background={data:bg.replace(/^data:/,'')};else sl.background={color:((DESIGNS[s.d]||DESIGNS.adv).c2||'#ffffff').slice(1)}}
+   if(s.bg!=null&&GRADS[s.bg]){const m=GRADS[s.bg].match(/#[0-9a-f]{6}/i);sl.background={color:(m?m[0]:'#ffffff').slice(1)}}else{const bg=(DESIGNS[s.d]&&DESIGNS[s.d].img)?await rasterData(`img/wc/${s.d}.webp`,1280,720):await svgPng(scene(s.d||'adv'),1280,720);if(bg)sl.background={data:bg.replace(/^data:/,'')};else sl.background={color:((DESIGNS[s.d]||DESIGNS.adv).c2||'#ffffff').slice(1)}}
    if(s.n&&sl.addNotes)sl.addNotes(s.n);
    for(const e of (s.els||[]).slice().sort((a,b)=>(a.z|0)-(b.z|0))){try{const x=num(e.x)/100*Wd,y=num(e.y)/100*H,w=(num(e.w)||20)/100*Wd,h=e.h?num(e.h)/100*H:null;const tx={fontFace:'Arial',rtlMode:true,align:e.al==='left'?'left':e.al==='center'?'center':'right',valign:'top'};
     if(e.t==='box'){sl.addShape(P.ShapeType.roundRect,{x,y,w,h:h||1,fill:{color:e.s==='note'?'FEF9C3':'FFFFFF',transparency:e.s==='card'||e.s==='cover'?6:0},rectRadius:.2,line:{color:D.c3.slice(1),width:1}});continue}
