@@ -17,6 +17,13 @@ const addDays=(n)=>new Date(Date.now()+n*864e5).toISOString().slice(0,10);
 const fmtDate=d=>{try{return new Date(d).toLocaleDateString('ar-SA-u-ca-gregory',{year:'numeric',month:'short',day:'numeric'})}catch(e){return d}};
 /* letters of a word for «رتّب الحروف»: harakat, shadda and tanween stay on their letter; tatweel is dropped */
 const letters=s=>{const t=String(s??'').replace(/\s|\u0640/g,''),out=[];for(const c of t){if(/[\u064B-\u065F\u0670\u06D6-\u06ED]/.test(c)&&out.length)out[out.length-1]+=c;else if(!/[\u064B-\u065F\u0670\u06D6-\u06ED]/.test(c))out.push(c)}return out};
+/* official header: Ministry of Education logo + the teacher's name, each can be switched off in «ملفي» */
+const MOE_SRC='img/moe.webp';
+const BRAND=()=>{const p=typeof ME!=='undefined'&&ME.p;if(!p)return{moe:false,name:'',school:''};const b=p.brand||{};return{moe:b.moe!==false,name:b.name!==false?String(p.name||'').trim():'',school:String(p.school||'').trim()}};
+function brandBar(cls){const b=BRAND();if(!b.moe&&!b.name)return '';return `<div class="brand ${cls||''}">${b.moe?`<img src="${MOE_SRC}" alt="وزارة التعليم" draggable="false">`:''}${b.name?`<span>${esc(b.name)}</span>`:''}</div>`}
+function officialHead(){const b=BRAND(),dt=fmtDate(new Date().toISOString());
+ if(!b.moe)return (b.name||b.school)?`<div class="offH plain"><div>${b.school?esc(b.school):''}</div><div></div><div>${b.name?'المعلمة: '+esc(b.name)+'<br>':''}${esc(dt)}</div></div>`:'';
+ return `<div class="offH"><div>المملكة العربية السعودية<br>وزارة التعليم${b.school?'<br>'+esc(b.school):''}</div><img src="${MOE_SRC}" alt="وزارة التعليم"><div>${b.name?'المعلمة: '+esc(b.name)+'<br>':''}التاريخ: ${esc(dt)}</div></div>`}
 const num=v=>{const n=parseFloat(en(v));return isNaN(n)?0:n};
 
 let _tt=0;

@@ -946,3 +946,14 @@ img.pimg{width:1.15em;height:1.15em;max-width:100%;flex:none;place-self:center;o
 .wsP .btn.ter{color:#333}
 @media print{#prt [data-noprint],#prt .wsTools{display:none!important}#prt .wsP{border:0;box-shadow:none;padding:0;max-width:none}#prt .wsS h2,#prt .wsS h2>b,#prt .ppHd th,#prt .wsOpts .k b,#prt .wsChips .kc{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 .aiPre{white-space:pre-wrap;word-break:break-word;background:var(--bg3);padding:10px;border-radius:var(--r2);font-size:13px;max-height:220px;overflow:auto}
+
+/* official header (Ministry logo + teacher name) */
+.brand{display:flex;align-items:center;gap:8px;direction:rtl}.brand img{display:block;height:44px;width:auto}.brand span{font:700 14px/1.2 var(--f);color:#1f2937;white-space:nowrap}
+.sl .slB{position:absolute;top:1.6%;left:1.4%;z-index:40;gap:1.2cqmin;padding:.7cqmin 1.4cqmin;border-radius:2cqmin;background:rgba(255,255,255,.9);box-shadow:0 .4cqmin 1.4cqmin rgba(0,0,0,.12);pointer-events:none}
+.sl .slB img{height:8cqmin}.sl .slB span{font-size:2.5cqmin}
+.jB{background:rgba(255,255,255,.92);padding:4px 10px;border-radius:12px}.jB img{height:40px}.jBl{position:absolute;top:14px;left:50%;transform:translateX(-50%);z-index:30}@media(max-width:700px){.jBl{position:static;transform:none;width:max-content;margin:10px auto 0}}
+.grB{padding:2px 8px;border-radius:10px;background:#fff}.grB img{height:34px}@media(max-width:600px){.grB span,.jB span{display:none}}
+.cMoe{position:absolute;top:4%;left:3%;height:16%;z-index:3}
+.offH{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;border-bottom:2px solid #2f8f83;padding-bottom:8px;margin-bottom:12px;font:600 13px/1.6 var(--f);color:#111}
+.offH>div:last-child{text-align:left}.offH img{height:74px;width:auto}.offH.plain{border-color:#999}
+#prt .offH{-webkit-print-color-adjust:exact;print-color-adjust:exact}
