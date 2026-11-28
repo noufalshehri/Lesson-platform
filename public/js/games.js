@@ -74,7 +74,7 @@ function runGame(cfg){closeGame(true);const g=clone(cfg),T=GTYPES[g.type],d=DESI
  const cnt=Math.max(1,num(g.count)||items.length);items=items.slice(0,g.type==='drag'?Math.max(cnt,12):cnt);
  const el=document.createElement('div');el.className=`gr d-${d}`;el.id='gr';el.style.cssText=`--wc:${D.c};--wc2:${D.c2};--wc3:${D.c3}`;
  el.innerHTML=`${scene(d)}<div class="grTop"><button class="ib" data-gx aria-label="إغلاق اللعبة">${ic('x')}</button><div class="grT"><b>${esc(g.title)}</b><small>${esc(T.name)}</small></div><div class="grTime" id="grTime"></div><div class="grScore">${rwHTML(D.reward)} <b id="grScore">${ar(0)}</b></div><button class="ib" data-gm aria-label="الصوت">${ic(SND.muted?'volume-x':'volume-2')}</button></div><div class="grMain" id="grMain"></div>`;
- document.body.appendChild(el);document.body.style.overflow='hidden';
+ GR.on=true;(document.fullscreenElement||document.body).appendChild(el);document.body.style.overflow='hidden';
  el.addEventListener('click',e=>{if(e.target.closest('[data-gx]'))closeGame();else if(e.target.closest('[data-gm]')){SND.muted=!SND.muted;e.target.closest('[data-gm]').innerHTML=ic(SND.muted?'volume-x':'volume-2');icons()}});
  const tok=GR.tok=(GR.tok||0)+1;const live=()=>tok===GR.tok&&GR.on;Object.assign(GR,{on:true,g,items,score:0,max:0,stop:null,d});
  const A={add(n=1){if(!live())return;GR.score+=n;$('#grScore').textContent=ar(GR.score);sfx('win');confetti(50)},max(n){GR.max=n},

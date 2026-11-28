@@ -11,11 +11,14 @@
 //   POST /api/billing/cancel          stop auto-renew
 //   GET|POST|DELETE /api/files        admin images in R2 (binding FILES)
 //   GET  /api/file/<key>              serve an uploaded image
+//   /api/ai/*                         AI educational generator (see lib/ai/service.js)
 //
 // Access rules (mirror the in-Claude version):
 //   data/users/<uid>/...   only that teacher
 //   teachers/<uid>         that teacher or an admin; plan fields are written by the server or an admin only
 //   catalog/*, config/*    everyone reads, admins write
+
+import { handleAI } from '../../lib/ai/service.js';
 
 const JSONH = { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' };
 const json = (data, status = 200, extra = {}) => new Response(JSON.stringify(data), { status, headers: { ...JSONH, ...extra } });
@@ -95,6 +98,11 @@ export async function onRequest(ctx) {
       const reg = JSON.parse(old.data); reg.auto = false;
       await putDoc(env, p, p.split('/'), reg);
       return json(reg);
+    }
+    if (path.startsWith('/ai/')) {
+      if (m !== 'GET' && !(request.headers.get('content-type') || '').includes('application/json')) return err('bad_type', 415);
+      try { return await handleAI(request, env, me, path.slice(3), isAdmin(me, env)); }
+      catch (e) { if (/no such table/i.test(String(e && e.message))) return err('ai_not_migrated', 503); throw e; }
     }
     if (path === '/files') {
       if (!isAdmin(me, env)) return err('forbidden', 403);
