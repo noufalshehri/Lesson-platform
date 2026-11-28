@@ -19,11 +19,12 @@ const fmtDate=d=>{try{return new Date(d).toLocaleDateString('ar-SA-u-ca-gregory'
 const letters=s=>{const t=String(s??'').replace(/\s|\u0640/g,''),out=[];for(const c of t){if(/[\u064B-\u065F\u0670\u06D6-\u06ED]/.test(c)&&out.length)out[out.length-1]+=c;else if(!/[\u064B-\u065F\u0670\u06D6-\u06ED]/.test(c))out.push(c)}return out};
 /* official header: Ministry of Education logo + the teacher's name, each can be switched off in «ملفي» */
 const MOE_SRC='img/moe.webp';
-const BRAND=()=>{const p=typeof ME!=='undefined'&&ME.p;if(!p)return{moe:false,name:'',school:''};const b=p.brand||{};return{moe:b.moe!==false,name:b.name!==false?String(p.name||'').trim():'',school:String(p.school||'').trim()}};
+const BRAND=()=>{const p=typeof ME!=='undefined'&&ME.p;if(!p)return{moe:false,name:'',school:''};const b=p.brand||{};return{moe:b.moe!==false,name:b.name!==false?String(p.name||'').trim():'',school:String(p.school||'').trim(),region:String(p.region||'').trim()}};
 function brandBar(cls){const b=BRAND();if(!b.moe&&!b.name)return '';return `<div class="brand ${cls||''}">${b.moe?`<img src="${MOE_SRC}" alt="وزارة التعليم" draggable="false">`:''}${b.name?`<span>${esc(b.name)}</span>`:''}</div>`}
-function officialHead(){const b=BRAND(),dt=fmtDate(new Date().toISOString());
- if(!b.moe)return (b.name||b.school)?`<div class="offH plain"><div>${b.school?esc(b.school):''}</div><div></div><div>${b.name?'المعلمة: '+esc(b.name)+'<br>':''}${esc(dt)}</div></div>`:'';
- return `<div class="offH"><div>المملكة العربية السعودية<br>وزارة التعليم${b.school?'<br>'+esc(b.school):''}</div><img src="${MOE_SRC}" alt="وزارة التعليم"><div>${b.name?'المعلمة: '+esc(b.name)+'<br>':''}التاريخ: ${esc(dt)}</div></div>`}
+function officialHead(){const b=BRAND(),dots='................';
+ const sch=b.school?(/^مدرس/.test(b.school)?b.school:'مدرسة '+b.school):'مدرسة: '+dots,reg=b.region?'الإدارة العامة للتعليم '+(/^ب/.test(b.region)?b.region:'ب'+b.region):'الإدارة العامة للتعليم بمنطقة '+dots;
+ const right=`${b.moe?'المملكة العربية السعودية<br>وزارة التعليم<br>'+esc(reg)+'<br>':''}${esc(sch)}`,left=b.name?'المعلمة: '+esc(b.name):'';
+ return `<div class="offH${b.moe?'':' plain'}"><div>${right}</div>${b.moe?`<img src="${MOE_SRC}" alt="وزارة التعليم">`:'<span></span>'}<div>${left}</div></div>`}
 const num=v=>{const n=parseFloat(en(v));return isNaN(n)?0:n};
 
 let _tt=0;
