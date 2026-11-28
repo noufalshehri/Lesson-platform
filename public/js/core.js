@@ -21,6 +21,12 @@ const letters=s=>{const t=String(s??'').replace(/\s|\u0640/g,''),out=[];for(cons
 const MOE_SRC='img/moe.webp';
 const BRAND=()=>{const p=typeof ME!=='undefined'&&ME.p;if(!p)return{moe:false,name:'',school:''};const b=p.brand||{};return{moe:b.moe!==false,name:b.name!==false?String(p.name||'').trim():'',school:String(p.school||'').trim(),region:String(p.region||'').trim()}};
 function brandBar(cls){const b=BRAND();if(!b.moe&&!b.name)return '';return `<div class="brand ${cls||''}">${b.moe?`<img src="${MOE_SRC}" alt="وزارة التعليم" draggable="false">`:''}${b.name?`<span>${esc(b.name)}</span>`:''}</div>`}
+/* slide header: ministry block on the right, teacher on the left (same order as the printed header) */
+function slideBrand(){const b=BRAND();if(!b.moe&&!b.name&&!b.school)return '';
+ const reg=b.region?'الإدارة العامة للتعليم '+(/^ب/.test(b.region)?b.region:'ب'+b.region):'',sch=b.school?(/^مدرس/.test(b.school)?b.school:'مدرسة '+b.school):'';
+ const lines=[...(b.moe?['المملكة العربية السعودية','وزارة التعليم']:[]),reg&&b.moe?reg:'',sch].filter(Boolean);
+ const right=(b.moe||lines.length)?`<div class="slHd slR">${b.moe?`<img src="${MOE_SRC}" alt="وزارة التعليم" draggable="false">`:''}${lines.length?`<span>${lines.map(esc).join('<br>')}</span>`:''}</div>`:'';
+ return right+(b.name?`<div class="slHd slL"><span>المعلمة: ${esc(b.name)}</span></div>`:'')}
 function officialHead(){const b=BRAND(),dots='................';
  const sch=b.school?(/^مدرس/.test(b.school)?b.school:'مدرسة '+b.school):'مدرسة: '+dots,reg=b.region?'الإدارة العامة للتعليم '+(/^ب/.test(b.region)?b.region:'ب'+b.region):'الإدارة العامة للتعليم بمنطقة '+dots;
  const right=`${b.moe?'المملكة العربية السعودية<br>وزارة التعليم<br>'+esc(reg)+'<br>':''}${esc(sch)}`,left=b.name?'المعلمة: '+esc(b.name):'';
