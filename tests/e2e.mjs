@@ -66,7 +66,7 @@ async function run(device) {
   await page.click('[data-aiplay]'); await page.waitForSelector('#pl');
   let answered = false, gameOpened = false;
   for (let i = 0; i < 30 && !(answered && gameOpened); i++) {
-    if (!answered && await page.locator('#stage .opt[data-ok="1"]').count()) { await page.locator('#stage .opt[data-ok="1"]').first().click(); answered = await page.locator('#stage .opt.won').count() > 0; }
+    if (!answered && await page.locator('#stage .opt[data-ok="1"]').count()) { await page.locator('#stage .opt[data-ok="1"]').first().click({ force: true }); answered = await page.locator('#stage .opt.won').count() > 0; }
     if (!gameOpened && await page.locator('#stage [data-game]').count()) { await page.locator('#stage [data-game]').first().click(); await page.waitForTimeout(400); gameOpened = await page.locator('#gr').count() > 0; if (gameOpened) await page.click("#gr [data-gx]"); await page.waitForTimeout(200); }
     const next = page.locator('#pl [data-a=next]'); if (await next.isDisabled()) break; await next.click(); await page.waitForTimeout(150);
   }
