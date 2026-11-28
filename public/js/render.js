@@ -25,7 +25,7 @@ function elHTML(e,d,ctx,i){const play=ctx.mode==='play';
 function slideHTML(s,ctx={}){ctx={mode:'view',...ctx};s=s||{els:[]};const d=DESIGNS[s.d]?s.d:'adv',D=DESIGNS[d];
  const g=s.bg!=null&&GRADS[s.bg]!=null?`<div class="bgc" style="background:${GRADS[s.bg]}"></div>`:scene(d);
  const dust=ctx.d3?`<div class="dust" aria-hidden="true">${Array.from({length:9},(_,k)=>`<i style="left:${(k*37+11)%92+4}%;top:${(k*53+7)%80+6}%;--z:${4+(k*7)%22}cqmin;animation-delay:-${k*.7}s"></i>`).join('')}</div>`:'';
- return `<div class="sl d-${d} ${ctx.mode==='play'&&s.tr&&!ctx.d3?'tr-'+esc(s.tr):''} ${ctx.cls||''}" style="--wc:${D.c};--wc2:${D.c2};--wc3:${D.c3}">${g}${dust}${(s.els||[]).map((e,i)=>elHTML(e,d,ctx,i)).join('')}</div>`}
+ return `<div class="sl d-${d} ${ctx.mode==='play'&&s.tr&&!ctx.d3?'tr-'+esc(s.tr):''} ${ctx.cls||''}" style="--wc:${D.c};--wc2:${D.c2};--wc3:${D.c3}">${g}${dust}${(s.els||[]).map((e,i)=>elHTML(e,d,ctx,i)).join('')}${brandBar('slB')}</div>`}
 const noBtn=h=>h.replace(/<button\b/g,'<span').replace(/<\/button>/g,'</span>');
 const thumb=s=>`<div class="stage pv">${noBtn(slideHTML(s))}</div>`;
 
@@ -247,7 +247,7 @@ document.addEventListener('keydown',e=>{const dl=$$('.dlg');if(e.key==='Escape'&
  if(!PL)return;if(e.key==='Escape')closePl();else if(e.key===' '&&!e.target.closest('button')){e.preventDefault();if(PL.i<PL.slides.length-1){PL.i++;renderPl(1)}}else if(e.key==='ArrowLeft'&&PL.i<PL.slides.length-1){PL.i++;renderPl(1)}else if(e.key==='ArrowRight'&&PL.i>0){PL.i--;renderPl(-1)}});
 
 /* ---------- certificate & wheel ---------- */
-function certHTML(name,reason,d){d=DESIGNS[d]?d:'gdn';const D=DESIGNS[d];return `<div class="cert" style="--wc:${D.c};--wc2:${D.c2}">${scene(d)}<div class="cin">${seal(D.c)}${mascot(D.m)}<div><div class="ck">شهادة تميّز</div><div class="cname">${esc(name)}</div><p class="creason">${esc(reason)}</p><div class="cfoot"><span>مع تحيات معلمتك ${esc(ME.p&&ME.p.name||'')}</span><span>${esc(fmtDate(today()))}</span></div></div></div></div>`}
+function certHTML(name,reason,d){d=DESIGNS[d]?d:'gdn';const D=DESIGNS[d];return `<div class="cert" style="--wc:${D.c};--wc2:${D.c2}">${scene(d)}${BRAND().moe?`<img class="cMoe" src="${MOE_SRC}" alt="وزارة التعليم">`:''}<div class="cin">${seal(D.c)}${mascot(D.m)}<div><div class="ck">شهادة تميّز</div><div class="cname">${esc(name)}</div><p class="creason">${esc(reason)}</p><div class="cfoot"><span>مع تحيات معلمتك ${esc(ME.p&&ME.p.name||'')}</span><span>${esc(fmtDate(today()))}</span></div></div></div></div>`}
 const wheelBox=(names)=>`<div class="wheel"><div class="wwrap"><canvas class="wc" width="600" height="600" aria-label="عجلة"></canvas><div class="wptr"></div></div><div class="wres" aria-live="polite"></div><button type="button" class="btn pri" data-spin>${ic('rotate-cw')}لفّي العجلة</button>${names===false?'':`<label class="lab">الأسماء، اسم في كل سطر<textarea class="in wnames" rows="4">${esc((names||MOT.names()).join('\n'))}</textarea></label>`}</div>`;
 function mountWheel(root,o={}){const cv=$('.wc',root),ta=$('.wnames',root),res=$('.wres',root);let ang=0,busy=false;
  const names=()=>o.items?o.items():ta.value.split('\n').map(s=>s.trim()).filter(Boolean);
