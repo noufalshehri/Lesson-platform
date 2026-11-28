@@ -807,18 +807,44 @@ img.rwi{width:1.25em;height:1.25em;object-fit:contain;vertical-align:-.25em}
 #prt .qrPG{display:grid;gap:8mm;justify-items:center}#prt .qrPG.l img{width:120mm}#prt .qrPG.m{grid-template-columns:repeat(3,1fr)}#prt .qrPG.m img{width:55mm}#prt .qrPG.s{grid-template-columns:repeat(5,1fr)}#prt .qrPG.s img{width:32mm}
 #prt .qrPG.t{grid-template-columns:repeat(2,1fr)}#prt .qrPG.t img{width:80mm}
 
-/* ===== illustration sizing: keep img/p pictures inside their boxes (they replaced emoji) ===== */
-img.pimg{max-width:100%;max-height:100%}
-.jfig,.jtile,.jbig,.jexp,.pf,.mpic,.gpic,.exp,.op{grid-template-rows:minmax(0,1fr);grid-template-columns:minmax(0,1fr)}
-.jfig img.pimg{width:80%;height:84%;place-self:center}
-.jtile img.pimg{width:80%;height:80%;place-self:center}
-.jbig img.pimg,.jexp img.pimg{width:82%;height:82%;place-self:center}
-.mpic img.pimg,.gpic img.pimg,.exp img.pimg,.op img.pimg{width:86%;height:86%;place-self:center}
-.spot span{width:72%;height:72%}
+/* ===== illustration sizing: a picture (img/p) takes the place of the emoji it replaced, so it is sized
+   in em of the container's emoji font-size; no percentage heights (iOS Safari can't resolve them in
+   aspect-ratio/grid boxes and the picture overflowed its circle) ===== */
+img.pimg{width:1.15em;height:1.15em;max-width:100%;flex:none;place-self:center;object-fit:contain!important}
+.op img.pimg{width:1em;height:1em}
+.pf img.pimg{width:100cqi;height:100cqi;max-width:none;border-radius:0}
+.pf-spot img.pimg,.pf-circle img.pimg{width:76cqi;height:76cqi}
+.pf-frame img.pimg{width:88cqi;height:88cqi}
+.sitem .sp img.pimg{width:100cqi;height:100cqi}
 .tray span{display:inline-grid;place-items:center}
-.tray img.pimg{width:9cqmin;height:9cqmin}
 .jtray img.pimg{width:60px;height:60px}
 .pcell img.pimg{width:58px;height:46px}
-.mp img.pimg{height:auto;aspect-ratio:1;max-height:30cqmin}
 .mcf .mp img.pimg{max-height:100%}
 .stage.pv .gchk{min-width:0;min-height:0}
+/* picture picker */
+.pkTabs{display:flex;gap:6px;overflow-x:auto;padding:6px 0 8px;scrollbar-width:thin}
+.pkTabs .chip{flex:none;min-height:34px;font-size:14px;padding:4px 12px}
+.pkQ{margin:8px 0 2px}
+.pkGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px;max-height:58vh;overflow:auto;padding:2px}
+.pkGrid.sm{grid-template-columns:repeat(auto-fill,minmax(64px,1fr));max-height:300px}
+.pkb{display:grid;justify-items:center;gap:2px;padding:6px 4px;border:2px solid var(--line);border-radius:14px;background:var(--bg);cursor:pointer;font:600 12px var(--f);color:var(--ink)}
+.pkb img{width:56px;height:56px;object-fit:contain}.pkGrid.sm .pkb img{width:42px;height:42px}
+.pkb span{line-height:1.2;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.pkb:hover,.pkb:focus-visible{border-color:#ffc800}.pkb.on{border-color:#16a34a;background:#f0fdf4}
+.pkWrap{display:flex;gap:6px;align-items:center;flex:1;min-width:0}.pkWrap .in{flex:1;min-width:0}
+.pkPick{flex:none;width:46px;height:46px;border:2px solid var(--line);border-radius:12px;background:var(--bg);display:grid;place-items:center;cursor:pointer;padding:3px;font-size:24px}
+.pkPick img{width:100%;height:100%;object-fit:contain}.pkPick:hover{border-color:#ffc800}
+.pkMore{margin-top:10px}.pkMore summary{cursor:pointer;font-weight:700}
+/* ===== watercolor worlds (wcf wcs wcb wcd wca wcn): paper cards with a dashed inner border ===== */
+:is(.d-wcf,.d-wcs,.d-wcb,.d-wcd,.d-wca,.d-wcn) .bx-card,
+:is(.d-wcf,.d-wcs,.d-wcb,.d-wcd,.d-wca,.d-wcn) .bx-page{background:color-mix(in srgb,var(--wc2) 82%,#fffdf6);border:0;border-radius:1.4cqmin;outline:.5cqmin dashed color-mix(in srgb,var(--wc) 75%,#fff);outline-offset:-2.2cqmin;box-shadow:0 .5cqmin 0 rgba(0,0,0,.06),0 2.4cqmin 4cqmin rgba(40,30,10,.18)}
+:is(.d-wcf,.d-wcs,.d-wcb,.d-wcd,.d-wca,.d-wcn) .bx-cover{background:color-mix(in srgb,var(--wc3) 72%,#fffdf6);border:0;border-radius:3cqmin;outline:.55cqmin dashed rgba(255,255,255,.95);outline-offset:-1.8cqmin;box-shadow:0 1.2cqmin 0 color-mix(in srgb,var(--wc) 55%,#5b4a2a),0 3cqmin 5cqmin rgba(40,30,10,.22)}
+:is(.d-wcf,.d-wcs,.d-wcb,.d-wcd,.d-wca,.d-wcn) .bx-mini{background:#fffdf6;border:.45cqmin dashed color-mix(in srgb,var(--wc) 70%,#fff);box-shadow:0 1.6cqmin 3cqmin rgba(40,30,10,.14)}
+:is(.d-wcf,.d-wcs,.d-wcb,.d-wcd,.d-wca,.d-wcn) .bx-note{background:#fdf6c9;box-shadow:0 1.6cqmin 3cqmin rgba(40,30,10,.2)}
+:is(.d-wcf,.d-wcs,.d-wcb,.d-wcd,.d-wca,.d-wcn) .bx-ribbon{background:#fffdf6;border-style:dashed}
+:is(.d-wcf,.d-wcs,.d-wcb,.d-wcd,.d-wca,.d-wcn) .tx-title{color:#2b2414;text-shadow:none}
+:is(.d-wcf,.d-wcs,.d-wcb,.d-wcd,.d-wca,.d-wcn) .tx-body{color:#3b3222}
+:is(.d-wcf,.d-wcs,.d-wcb,.d-wcd,.d-wca,.d-wcn) .tx-tag{box-shadow:0 .6cqmin 0 rgba(0,0,0,.18)}
+:is(.d-wcf,.d-wcs,.d-wcb,.d-wcd,.d-wca,.d-wcn) .tx-kick{background:#fffdf6;border:.35cqmin dashed var(--wc);box-shadow:none}
+:is(.d-wcf,.d-wcs,.d-wcb,.d-wcd,.d-wca,.d-wcn) .opt:not(.tf){background:#fffdf6;border-style:dashed}
+.d-wcn .hint,.d-wcn > .tx-body{color:#e0e7ff}
