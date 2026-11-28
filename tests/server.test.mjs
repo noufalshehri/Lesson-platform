@@ -168,3 +168,21 @@ test('invalid Gemini key (HTTP 400) is reported precisely', async () => {
   const r = await call('POST', '/ai/generate', { module: 'quiz', input: INPUT }, 'teacher', f);
   assert.equal(r.body.error, 'bad_key'); assert.ok(r.body.message.includes('GEMINI_API_KEY'));
 });
+
+test('OpenAI: only the key is required; newer models retried with max_completion_tokens; fallback from Gemini', async () => {
+  const { call } = setup({ GEMINI_API_KEY: 'g', OPENAI_COMPAT_API_KEY: 'sk-test' }); await signup(call, 'admin', ADMIN); await signup(call, 'teacher', 't10@school.sa');
+  const { FIX } = await import('./fixtures.mjs');
+  const seen = [];
+  const f = async (url, init) => {
+    const body = JSON.parse(init.body); seen.push({ url, body });
+    if (url.includes('generativelanguage')) return new Response('{"error":{"message":"Resource exhausted per minute"}}', { status: 429 });
+    if (body.max_tokens) return new Response('{"error":{"message":"Unsupported parameter: max_tokens is not supported with this model. Use max_completion_tokens instead."}}', { status: 400 });
+    return new Response(JSON.stringify({ choices: [{ message: { content: JSON.stringify(FIX.quiz) }, finish_reason: 'stop' }], usage: { prompt_tokens: 10, completion_tokens: 20 } }), { status: 200 });
+  };
+  const r = await call('POST', '/ai/generate', { module: 'quiz', input: INPUT }, 'teacher', f);
+  assert.equal(r.status, 200, JSON.stringify(r.body));
+  const oa = seen.filter(x => x.url === 'https://api.openai.com/v1/chat/completions');
+  assert.equal(oa.length, 2); assert.equal(oa[1].body.model, 'gpt-4o-mini'); assert.ok(oa[1].body.max_completion_tokens && !oa[1].body.temperature);
+  const st = await call('GET', '/ai/admin/stats', undefined, 'admin'); assert.equal(st.body.providers.openai.configured, true);
+  assert.ok(!JSON.stringify(st.body).includes('sk-test'));
+});
